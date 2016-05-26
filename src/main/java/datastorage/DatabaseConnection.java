@@ -143,6 +143,11 @@ public class DatabaseConnection {
         return result;
     }
     
+    public boolean executeSQLUpdateStatement(String query)
+    {
+        return executeSQLDeleteStatement(query);
+    }   
+    
     
     public ResultSet executeSQLInsertStatement(String query)
     {

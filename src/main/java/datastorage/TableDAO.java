@@ -26,7 +26,7 @@ public class TableDAO {
             if(connection.openConnection())
             {
                 // If a connection was successfully setup, execute the SELECT statement.    '%1$d' '%2$d', NewTableNumber, OldTableNumber
-                String s = String.format( "UPDATE `order` SET `Table`=4 WHERE `Table`=6") ;
+                String s = String.format( "UPDATE `order` SET `Table`='%1$d' WHERE `Table`='%2$d'", NewTableNumber,OldTableNumber) ;
                 ResultSet resultset = connection.executeSQLInsertStatement(s);       
                 System.out.println("Test2");
   

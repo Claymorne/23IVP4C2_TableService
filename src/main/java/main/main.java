@@ -5,6 +5,10 @@
  */
 package main;
 
+import datastorage.OrderDAO;
+import datastorage.TableDAO;
+import domain.Order;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 
 
@@ -14,8 +18,11 @@ import javax.swing.JFrame;
  */
 public class main {
         public static void main(String[] args) {
-       JFrame Frame = new JFrame();
-       Frame.setSize(500, 400);
+            
+       
+       //Maakt nieuwe JFrame, contentpane is ServiceGUI
+       JFrame Frame = new JFrame(); 
+       Frame.setSize(1000, 500);
        Frame.setDefaultCloseOperation(
        JFrame.EXIT_ON_CLOSE);    
        Frame.setTitle("Hartige Hap");
