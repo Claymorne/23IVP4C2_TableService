@@ -6,6 +6,7 @@
 package presentation;
 
 import businesslogic.TableServiceManager;
+import com.sun.javafx.geom.Curve;
 import datastorage.InsertDAO;
 import domain.Order;
 import datastorage.DatabaseConnection;
@@ -13,8 +14,13 @@ import datastorage.TableDAO;
 import domain.Order.ConsumptionType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ButtonGroup;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 
 /**
  *
@@ -68,10 +74,13 @@ public class ServiceGUI extends javax.swing.JPanel {
        
         DefaultTableModel tmDrinks = (DefaultTableModel)drinksTable.getModel();
         DefaultTableModel tmMeals = (DefaultTableModel)mealsTable.getModel();
+        DefaultTableModel tmOrders = (DefaultTableModel)ordersTable.getModel();
 
         //vult de tabellen
         fillTable(tmMeals, Order.ConsumptionType.GERECHT);
         fillTable(tmDrinks, Order.ConsumptionType.DRANK);
+        fillOrderTable(tmOrders, Order.ConsumptionType.GERECHT);
+        sortOrderTable();
     }
 
     private void fillTable(DefaultTableModel tm, Order.ConsumptionType consumptionType) {
@@ -83,6 +92,7 @@ public class ServiceGUI extends javax.swing.JPanel {
             String gerechtNaam = "" + o.getConsumptionName(); //naam consumptie
             String bestellingID = "" + o.getOrderID(); //BestellingID
 
+
             Object[] row = new Object[]{tafelNummer, gerechtNaam, bestellingID};
                 //rows worden gevuld
             tm.insertRow(rowIndex, row);
@@ -91,14 +101,66 @@ public class ServiceGUI extends javax.swing.JPanel {
         }
     }
     
+        private void fillOrderTable(DefaultTableModel tm, ConsumptionType GERECHT) {
+        int rowIndex = 0;
+        
+        for(Order o : tsManager.getUniqueOrders(ConsumptionType.GERECHT))
+        {
+            String tafelNummer = "" + o.getTableID(); //Tafel
+            String soortBestelling = "Gerecht" ; //Soort
+                                                      //status
+
+            Object[] row = new Object[]{tafelNummer,soortBestelling, };
+                //rows worden gevuld
+            tm.insertRow(rowIndex, row);
+
+            rowIndex += 1;
+        }
+        
+        for(Order o : tsManager.getUniqueOrders(ConsumptionType.DRANK))
+        {
+            String tafelNummer = "" + o.getTableID(); //Tafel
+            String soortBestelling = "Drank" ; //Soort
+                                                      //status
+            
+            Object[] row = new Object[]{tafelNummer, soortBestelling, };
+                //rows worden gevuld
+            tm.insertRow(rowIndex, row);
+
+            rowIndex += 1;
+        }
+            }
     
+        private void sortOrderTable(){
+        
+        DefaultTableModel tmDrinks = (DefaultTableModel)drinksTable.getModel();
+        DefaultTableModel tmMeals = (DefaultTableModel)mealsTable.getModel();
+        DefaultTableModel tmOrders = (DefaultTableModel)ordersTable.getModel();
+        
+        
+        
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(tmOrders);
+        
+        
+            ordersTable.setRowSorter(sorter);
+            List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+ 
+            int columnIndexToSort = 0;
+            sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.ASCENDING));
+ 
+            sorter.setSortKeys(sortKeys);
+            sorter.sort();
+        }
     
     private void clearDrinksAndMealsTable() {
         DefaultTableModel tmDrinks = (DefaultTableModel)drinksTable.getModel();
         DefaultTableModel tmMeals = (DefaultTableModel)mealsTable.getModel();
+        DefaultTableModel tmOrders = (DefaultTableModel)ordersTable.getModel();
+        
         //haalt alle tables leeg
         clearTable(tmDrinks);
         clearTable(tmMeals);
+        clearTable(tmOrders);
     }
 
     private void clearTable(DefaultTableModel tm) {
@@ -162,6 +224,9 @@ public class ServiceGUI extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
+        jPanel4 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        ordersTable = new javax.swing.JTable();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -188,6 +253,8 @@ public class ServiceGUI extends javax.swing.JPanel {
                 {null, null, null},
                 {null, null, null},
                 {null, null, null},
+                {null, null, null},
+                {null, null, null},
                 {null, null, null}
             },
             new String [] {
@@ -198,6 +265,8 @@ public class ServiceGUI extends javax.swing.JPanel {
 
         mealsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
+                {null, null, null},
+                {null, null, null},
                 {null, null, null},
                 {null, null, null},
                 {null, null, null},
@@ -289,9 +358,7 @@ public class ServiceGUI extends javax.swing.JPanel {
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(radioDrink)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -301,8 +368,10 @@ public class ServiceGUI extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(handleButton)))
-                .addContainerGap(153, Short.MAX_VALUE))
+                        .addComponent(handleButton))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap(165, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Overzicht", jPanel1);
@@ -335,9 +404,9 @@ public class ServiceGUI extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(79, 79, 79)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(99, 99, 99)
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -346,14 +415,14 @@ public class ServiceGUI extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(153, 153, 153)
+                        .addGap(54, 54, 54)
                         .addComponent(jButton4)))
-                .addContainerGap(709, Short.MAX_VALUE))
+                .addContainerGap(729, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(29, 29, 29)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -361,7 +430,7 @@ public class ServiceGUI extends javax.swing.JPanel {
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jButton4)
-                .addContainerGap(373, Short.MAX_VALUE))
+                .addContainerGap(359, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Tafel Veranderen", jPanel2);
@@ -395,10 +464,58 @@ public class ServiceGUI extends javax.swing.JPanel {
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(394, Short.MAX_VALUE))
+                .addContainerGap(398, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Afrekenen", jPanel3);
+
+        ordersTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Tafel", "Soort", "Status"
+            }
+        ));
+        jScrollPane3.setViewportView(ordersTable);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(515, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Status Bestellingen", jPanel4);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -437,7 +554,7 @@ public class ServiceGUI extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-                    System.out.println("Test3");
+
             
             int OldTableNumber = Integer.parseInt(jTextField1.getText());
             int NewTableNumber = Integer.parseInt(jTextField3.getText());
@@ -472,14 +589,17 @@ public class ServiceGUI extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTable mealsTable;
+    private javax.swing.JTable ordersTable;
     private javax.swing.JRadioButton radioDrink;
     private javax.swing.JRadioButton radioMeal;
     private javax.swing.JButton refreshButton;

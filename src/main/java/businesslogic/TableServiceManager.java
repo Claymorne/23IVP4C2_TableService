@@ -5,6 +5,7 @@
  */
 package businesslogic;
 
+import com.sun.javafx.geom.AreaOp;
 import datastorage.OrderDAO;
 import domain.Order;
 import domain.Order.ConsumptionType;
@@ -60,6 +61,28 @@ public class TableServiceManager {
         Collections.sort(returnList);
         return returnList;
     }
+    
+        public ArrayList<Order> getUniqueOrders(ConsumptionType consumptionType)
+    {
+        ArrayList<Order> returnList = new ArrayList<>();
+        
+        ArrayList UniqueOrders = new ArrayList();
+        for(Order o : this.orders)
+        {
+            if (o.getConsumptionType() == consumptionType && UniqueOrders.contains(o.getOrderID()) == false)
+            {
+                
+                returnList.add(o);
+                int uniqueOrderID = o.getOrderID();
+                UniqueOrders.add(uniqueOrderID);
+                
+            }
+        }
+        
+        return returnList;
+    }
+    
+    
     
     public void updateOrdersStatus(ConsumptionType consumptionType, int tableID) {
         (new OrderDAO()).updateStatus(consumptionType, tableID);
