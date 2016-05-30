@@ -34,9 +34,8 @@ public class ServiceGUI extends javax.swing.JPanel {
      */
     public ServiceGUI() {
         tsManager = new TableServiceManager(); //Managerklasse wordt object
-        initComponents(); // dit wordt door de GUI designer aangeroepen
-        initConsumptionGroup(); // dit wordt door de GUI designer aangeroepen
-        initTableComboBox(); // dit wordt door de GUI designer aangeroepen
+        initComponents(); // Maakt alle componenten
+        initConsumptionGroup(); // Maakt de gerecht/drank kies knoppen
         refreshUIContent(); // dit wordt door de GUI designer aangeroepen
     }      
 
@@ -67,7 +66,7 @@ public class ServiceGUI extends javax.swing.JPanel {
     
     
     private void refreshUIContent() {
-        clearDrinksAndMealsTable(); //Eerst word alles leeggehaald
+        clearAllTables(); //Eerst word alles leeggehaald
         tsManager.updateOrders(); // Laad dan de database opnieuw alles lezen
         initTableComboBox(); // En dan de Combobox vullen
 
@@ -80,7 +79,7 @@ public class ServiceGUI extends javax.swing.JPanel {
         fillTable(tmMeals, Order.ConsumptionType.GERECHT);
         fillTable(tmDrinks, Order.ConsumptionType.DRANK);
         fillOrderTable(tmOrders, Order.ConsumptionType.GERECHT);
-        sortOrderTable();
+        
     }
 
     private void fillTable(DefaultTableModel tm, Order.ConsumptionType consumptionType) {
@@ -108,9 +107,10 @@ public class ServiceGUI extends javax.swing.JPanel {
         {
             String tafelNummer = "" + o.getTableID(); //Tafel
             String soortBestelling = "Gerecht" ; //Soort
+            String contentStatus = o.getContentStatusString(); //status
                                                       //status
 
-            Object[] row = new Object[]{tafelNummer,soortBestelling, };
+            Object[] row = new Object[]{tafelNummer,soortBestelling, contentStatus};
                 //rows worden gevuld
             tm.insertRow(rowIndex, row);
 
@@ -121,20 +121,20 @@ public class ServiceGUI extends javax.swing.JPanel {
         {
             String tafelNummer = "" + o.getTableID(); //Tafel
             String soortBestelling = "Drank" ; //Soort
-                                                      //status
+            String contentStatus = o.getContentStatusString(); //status
             
-            Object[] row = new Object[]{tafelNummer, soortBestelling, };
+            Object[] row = new Object[]{tafelNummer, soortBestelling, contentStatus};
                 //rows worden gevuld
             tm.insertRow(rowIndex, row);
 
             rowIndex += 1;
         }
+        
+        sortOrderTable();
             }
     
         private void sortOrderTable(){
         
-        DefaultTableModel tmDrinks = (DefaultTableModel)drinksTable.getModel();
-        DefaultTableModel tmMeals = (DefaultTableModel)mealsTable.getModel();
         DefaultTableModel tmOrders = (DefaultTableModel)ordersTable.getModel();
         
         
@@ -152,7 +152,37 @@ public class ServiceGUI extends javax.swing.JPanel {
             sorter.sort();
         }
     
-    private void clearDrinksAndMealsTable() {
+        
+        private void fillInvoiceTable(){
+                    
+            DefaultTableModel tmInvoice = (DefaultTableModel)invoiceTable.getModel();
+            
+            int rowIndex = 0;
+            double totalPrice = 0;
+        
+                for(Order o : tsManager.getInvoiceOrders(Integer.parseInt(invoiceTableNumber.getText())) )
+        {
+            String gerechtNaam = "" + o.getConsumptionName(); //naam consumptie
+            String price = "€ " + o.getPrice(); //prijs
+            
+            totalPrice += o.getPrice();
+            invoiceTotalPrice.setText("€ " + totalPrice);
+
+
+            Object[] row = new Object[]{gerechtNaam, price};
+                //rows worden gevuld
+            tmInvoice.insertRow(rowIndex, row);
+
+            rowIndex += 1;
+        }
+        
+        
+            
+        }
+        
+        
+        
+    private void clearAllTables() {
         DefaultTableModel tmDrinks = (DefaultTableModel)drinksTable.getModel();
         DefaultTableModel tmMeals = (DefaultTableModel)mealsTable.getModel();
         DefaultTableModel tmOrders = (DefaultTableModel)ordersTable.getModel();
@@ -223,7 +253,13 @@ public class ServiceGUI extends javax.swing.JPanel {
         jButton4 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        invoiceTableNumber = new javax.swing.JTextField();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        invoiceTable = new javax.swing.JTable();
+        invoiceTotalPrice = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        invoiceHandle = new javax.swing.JButton();
+        invoiceTableSearch = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         ordersTable = new javax.swing.JTable();
@@ -437,9 +473,51 @@ public class ServiceGUI extends javax.swing.JPanel {
 
         jLabel10.setText("Welke tafel wil afrekenen?");
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        invoiceTableNumber.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                invoiceTableNumberActionPerformed(evt);
+            }
+        });
+
+        invoiceTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Naam", "Prijs"
+            }
+        ));
+        jScrollPane4.setViewportView(invoiceTable);
+
+        invoiceTotalPrice.setEditable(false);
+        invoiceTotalPrice.setBackground(new java.awt.Color(255, 255, 51));
+        invoiceTotalPrice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                invoiceTotalPriceActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Totaalprijs");
+
+        invoiceHandle.setText("Reken af");
+        invoiceHandle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                invoiceHandleActionPerformed(evt);
+            }
+        });
+
+        invoiceTableSearch.setText("Search");
+        invoiceTableSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                invoiceTableSearchActionPerformed(evt);
             }
         });
 
@@ -450,21 +528,45 @@ public class ServiceGUI extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(112, 112, 112)
-                        .addComponent(jLabel10))
+                        .addContainerGap()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(53, 53, 53)
+                                .addComponent(invoiceTableNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(165, 165, 165)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(739, Short.MAX_VALUE))
+                        .addGap(34, 34, 34)
+                        .addComponent(invoiceTableSearch)))
+                .addGap(47, 47, 47)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(invoiceHandle)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(invoiceTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(551, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(398, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(invoiceTableNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(invoiceTableSearch))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(invoiceTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(46, 46, 46)
+                .addComponent(invoiceHandle)
+                .addContainerGap(155, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Afrekenen", jPanel3);
@@ -545,9 +647,9 @@ public class ServiceGUI extends javax.swing.JPanel {
         refreshUIContent();
     }//GEN-LAST:event_refreshButtonActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void invoiceTableNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceTableNumberActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_invoiceTableNumberActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
        // TODO add your handling code here:
@@ -574,13 +676,37 @@ public class ServiceGUI extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField4ActionPerformed
 
+    private void invoiceTotalPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceTotalPriceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_invoiceTotalPriceActionPerformed
+
+    private void invoiceHandleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceHandleActionPerformed
+            DefaultTableModel tmInvoice = (DefaultTableModel)invoiceTable.getModel();        
+        clearTable(tmInvoice);
+        invoiceTotalPrice.setText("");
+        tsManager.invoiceTable(Integer.parseInt(invoiceTableNumber.getText())); 
+    }//GEN-LAST:event_invoiceHandleActionPerformed
+
+    private void invoiceTableSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceTableSearchActionPerformed
+        
+        DefaultTableModel tmInvoice = (DefaultTableModel)invoiceTable.getModel();        
+        clearTable(tmInvoice);
+        fillInvoiceTable();        // TODO add your handling code here:
+    }//GEN-LAST:event_invoiceTableSearchActionPerformed
+
             
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbTable;
     private javax.swing.JTable drinksTable;
     private javax.swing.JButton handleButton;
+    private javax.swing.JButton invoiceHandle;
+    private javax.swing.JTable invoiceTable;
+    private javax.swing.JTextField invoiceTableNumber;
+    private javax.swing.JButton invoiceTableSearch;
+    private javax.swing.JTextField invoiceTotalPrice;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -593,9 +719,9 @@ public class ServiceGUI extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTable mealsTable;

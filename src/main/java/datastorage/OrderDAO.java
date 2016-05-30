@@ -50,7 +50,7 @@ public class OrderDAO
                 
                         
                 ResultSet resultset = connection.executeSQLSelectStatement(
-                    "SELECT * FROM `order`, `ordercontent` WHERE `order`.ID = `ordercontent`.OrderID AND `ordercontent`.`ContentStatus` = 4 ");
+                    "SELECT * FROM `order`, `ordercontent` WHERE `order`.ID = `ordercontent`.OrderID");
                 
             try {
                 while(resultset.next()){
@@ -63,10 +63,12 @@ public class OrderDAO
                     ConsumptionType consumptionType = ConsumptionType.valueOf(
                                             resultset.getString("ConsumptionType").toUpperCase());
                     int orderContentID = resultset.getInt("OrderContentID");
+                    int contentStatus = resultset.getInt("ContentStatus");
+                    double price = resultset.getDouble("Prijs");
                     
                     //        Order(int OrderID , int TableID , String consumptionName,
                     //        ConsumptionType consumptionType, int orderContentID )
-                    Order o = new Order(orderID, TableID, consumptionName,consumptionType , orderContentID);
+                    Order o = new Order(orderID, TableID, consumptionName,consumptionType , orderContentID , contentStatus, price);
                     
                     orderLijst.add(o);
                     
@@ -143,6 +145,24 @@ public class OrderDAO
                 connection.closeConnection();
             }
             
-   }          
+   }       
+    
+       public void invoiceTable(int tableID){
+       
+        DatabaseConnection connection = new DatabaseConnection();
+            if(connection.openConnection()){
+                
+                String s = String.format( "UPDATE `ordercontent` inner join "
+                        + "`order` on `order`.ID = `ordercontent`.OrderID SET"
+                        + " `ContentStatus`= 7 WHERE"
+                        + "  `Table` = '%d'",
+                         tableID) ;
+                boolean succesfulUpdate = connection.executeSQLUpdateStatement(s);
+                
+                updateOrderHelper(tableID);
+                
+                connection.closeConnection();
+            }
+   }
             
 }

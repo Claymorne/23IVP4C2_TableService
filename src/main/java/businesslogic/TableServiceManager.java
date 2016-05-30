@@ -35,7 +35,7 @@ public class TableServiceManager {
         
         for(Order o : this.orders)
         {
-            if (o.getConsumptionType() == consumptionType)
+            if (o.getConsumptionType() == consumptionType && o.getContentStatus() == 4)
             {
                 returnList.add(o);
             }
@@ -52,7 +52,7 @@ public class TableServiceManager {
         {
             int tafelId = o.getTableID();
             
-            if ( returnList.contains(tafelId) == false)
+            if ( returnList.contains(tafelId) == false && o.getContentStatus() == 4)
             {
                 returnList.add(tafelId);
             }
@@ -82,9 +82,28 @@ public class TableServiceManager {
         return returnList;
     }
     
-    
+        public ArrayList<Order> getInvoiceOrders(int tableID)
+    {
+        ArrayList<Order> returnList = new ArrayList<>();
+        
+        for(Order o : this.orders)
+        {
+            if (o.getTableID() == tableID && o.getContentStatus() == 6)
+            {
+                returnList.add(o);
+            }
+        }
+        
+        return returnList;
+    }
+        
+        
     
     public void updateOrdersStatus(ConsumptionType consumptionType, int tableID) {
         (new OrderDAO()).updateStatus(consumptionType, tableID);
+    }
+    
+    public void invoiceTable(int tableID) {
+        (new OrderDAO()).invoiceTable(tableID);
     }
 }
