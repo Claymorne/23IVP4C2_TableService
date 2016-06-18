@@ -27,8 +27,8 @@ public class TableDAO {
             {
                 // If a connection was successfully setup, execute the SELECT statement.    '%1$d' '%2$d', NewTableNumber, OldTableNumber
                 
-                //UPDATE `order` SET `Table`=4 WHERE `Table`=9 and `StatusNr` <> 6
-                String s = String.format( "UPDATE `order` SET `Table`='%1$d' WHERE `Table`='%2$d' AND `StatusNr` <> 6", NewTableNumber,OldTableNumber) ;
+                //UPDATE `order` SET `TableNumber` = 10 WHERE `TableNumber` = 6 AND `StatusNumber` <> 6
+                String s = String.format( "UPDATE `order` SET `TableNumber` = %s WHERE `TableNumber` = %d AND `StatusNumber` <> 6", NewTableNumber,OldTableNumber) ;
                 ResultSet resultset = connection.executeSQLInsertStatement(s);       
   
                 connection.closeConnection();

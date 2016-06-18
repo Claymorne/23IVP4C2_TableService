@@ -130,9 +130,27 @@ public class OrderDAO {
                 boolean succesfulupdate = connection.executeSQLDeleteStatement(s);
 
                 //updateOrderHelper(tableID);
-
             }
-/*
+
+            if (consumptionType == ConsumptionType.DRINK) {
+                String s = String.format("UPDATE `consumptionorder` \n"
+                        + "INNER JOIN `consumption` \n"
+                        + "on `consumptionorder`.`ConsumptionNumber` = `consumption`.`ConsumptionNumber` \n"
+                        + "INNER JOIN `order` \n"
+                        + "on `order`.`OrderNumber` = `consumptionorder`.`OrderNumber` \n"
+                        + "INNER JOIN `table` \n"
+                        + "on `order`.`TableNumber` = `table`.`TableNumber` \n"
+                        + "SET `consumptionorder`.`ConsumptionStatus` = '4', \n"
+                        + "`EmployeeNr` = '%s' \n"
+                        + "WHERE `order`.`TableNumber` = '%d' \n"
+                        + "AND `consumptionorder`.`ConsumptionStatus` = '3' \n"
+                        + "AND \n"
+                        + "(`consumption`.ConsumptionType =  'hot beverage' \n"
+                        + "OR\n"
+                        + "`consumption`.ConsumptionType =  'drink')", employeeId, tableID);
+                boolean succesfulupdate = connection.executeSQLDeleteStatement(s);
+            }
+            /*
             String s = String.format("UPDATE `ordercontent` inner join "
                     + "`order` on `order`.ID = `ordercontent`.OrderID SET"
                     + " `ContentStatus`= 4 WHERE"
