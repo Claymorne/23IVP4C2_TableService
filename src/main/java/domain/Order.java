@@ -12,20 +12,22 @@ package domain;
 public class Order {
 
 
+
     private int orderID, orderContentID, contentStatus;
     private int tableID;
     private String consumptionName;
     private ConsumptionType consumptionType;
     private double price;
+    private boolean wantsInvoice;
             
     public enum ConsumptionType {
-        GERECHT,
-        DRANK
+        MEAL,
+        DRINK
     };
     
         public Order(int OrderID , int TableID , String consumptionName,
                 ConsumptionType consumptionType, int orderContentID,
-                int contentStatus, double price)
+                int contentStatus, double price, boolean wantsinvoice)
     {
         this.orderID = OrderID;
         this.tableID = TableID;
@@ -34,6 +36,7 @@ public class Order {
         this.orderContentID = orderContentID;
         this.contentStatus = contentStatus;
         this.price = price;
+        this.wantsInvoice =  wantsinvoice;
         
     }
 
@@ -76,6 +79,11 @@ public class Order {
     public ConsumptionType getConsumptionType() {
         return consumptionType;
     }
+    
+        public boolean GetWantsInvoice() {
+        return wantsInvoice;
+    }
+
 
     public void setConsumptionType(ConsumptionType consumptionType) {
         this.consumptionType = consumptionType;
@@ -95,27 +103,19 @@ public class Order {
             }
             
             if (contentStatus == 2) {
-                return "";
-            }
-            
-            if (contentStatus == 3) {
                 return "Wordt bereid";
             }
             
-            if (contentStatus == 4) {
+            if (contentStatus == 3) {
                 return "Wordt opgediend";
             }
             
+            if (contentStatus == 4) {
+                return "Opgediend";
+            }
+            
             if (contentStatus == 5) {
-                return "Is opgediend";
-            }
-            
-            if (contentStatus == 6) {
-                return "Wil betalen";
-            }
-            
-            if (contentStatus == 7) {
-                return "Heeft betaald";
+                return "Betaald";
             }
             else{
                 return "Error: Geen contentStatus";

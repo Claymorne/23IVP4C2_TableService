@@ -50,14 +50,20 @@ public class ServiceGUI extends javax.swing.JPanel {
         radioDrink.setSelected(true); //zet default op drank, reden omdat deze het vaakst wordt gedaan.
     }
     
-    private void initTableComboBox()
+    private void initComboBox()
     {
         //verwijdert eerst alles uit de ComboBox
         cbTable.removeAllItems();
+        cbInvoice.removeAllItems();
         //Alleen bestaande tafels waar wat besteld is staat in de combobox
         for (int i : tsManager.getListOfSortedUniqueTables() )
         {
             cbTable.addItem("Tafel " + i);
+        }
+        
+                for (int i : tsManager.getListOfSortedUniqueInvoiceTables() )
+        {
+            cbInvoice.addItem("Tafel " + i);
         }
     }
     
@@ -68,7 +74,7 @@ public class ServiceGUI extends javax.swing.JPanel {
     private void refreshUIContent() {
         clearAllTables(); //Eerst word alles leeggehaald
         tsManager.updateOrders(); // Laad dan de database opnieuw alles lezen
-        initTableComboBox(); // En dan de Combobox vullen
+        initComboBox(); // En dan de Combobox vullen
 
        
         DefaultTableModel tmDrinks = (DefaultTableModel)drinksTable.getModel();
@@ -76,9 +82,9 @@ public class ServiceGUI extends javax.swing.JPanel {
         DefaultTableModel tmOrders = (DefaultTableModel)ordersTable.getModel();
 
         //vult de tabellen
-        fillTable(tmMeals, Order.ConsumptionType.GERECHT);
-        fillTable(tmDrinks, Order.ConsumptionType.DRANK);
-        fillOrderTable(tmOrders, Order.ConsumptionType.GERECHT);
+        fillTable(tmMeals, Order.ConsumptionType.MEAL);
+        fillTable(tmDrinks, Order.ConsumptionType.DRINK);
+        fillOrderTable(tmOrders, Order.ConsumptionType.MEAL);
         
     }
 
@@ -103,7 +109,7 @@ public class ServiceGUI extends javax.swing.JPanel {
         private void fillOrderTable(DefaultTableModel tm, ConsumptionType GERECHT) {
         int rowIndex = 0;
         
-        for(Order o : tsManager.getUniqueOrders(ConsumptionType.GERECHT))
+        for(Order o : tsManager.getUniqueOrders(ConsumptionType.MEAL))
         {
             String tafelNummer = "" + o.getTableID(); //Tafel
             String soortBestelling = "Gerecht" ; //Soort
@@ -117,7 +123,7 @@ public class ServiceGUI extends javax.swing.JPanel {
             rowIndex += 1;
         }
         
-        for(Order o : tsManager.getUniqueOrders(ConsumptionType.DRANK))
+        for(Order o : tsManager.getUniqueOrders(ConsumptionType.DRINK))
         {
             String tafelNummer = "" + o.getTableID(); //Tafel
             String soortBestelling = "Drank" ; //Soort
@@ -159,8 +165,15 @@ public class ServiceGUI extends javax.swing.JPanel {
             
             int rowIndex = 0;
             double totalPrice = 0;
-        
-                for(Order o : tsManager.getInvoiceOrders(Integer.parseInt(invoiceTableNumber.getText())) )
+            
+            
+            
+            String str = (String)cbInvoice.getSelectedItem(); // get string zoals "Tafel 1"
+            str = str.replace("Tafel ", ""); // Verander "Tafel 1" naar "1"
+            int tableId = Integer.parseInt(str); // vernader "1" naar 1 (int)
+            
+            
+                for(Order o : tsManager.getInvoiceOrders(tableId) )
         {
             String gerechtNaam = "" + o.getConsumptionName(); //naam consumptie
             String price = "€ " + o.getPrice(); //prijs
@@ -208,16 +221,19 @@ public class ServiceGUI extends javax.swing.JPanel {
         str = str.replace("Tafel ", ""); // Verander "Tafel 1" naar "1"
         int tableId = Integer.parseInt(str); // vernader "1" naar 1 (int)
         
+        //verkrijg employeenr
+        int employeeId = Integer.parseInt(employeeField.getText());
+        
         // default value
-        ConsumptionType ct = Order.ConsumptionType.DRANK;
+        ConsumptionType ct = Order.ConsumptionType.DRINK;
         
         if (radioMeal.isSelected() == true)
         {
-            ct = Order.ConsumptionType.GERECHT;
-        } //als meal radiobutton is geselecteerd dan word de type op GERECHT
-          //gezet, en anders blijft de DRANK staan  
+            ct = Order.ConsumptionType.MEAL;
+        } //als meal radiobutton is geselecteerd dan word de type op MEAL
+          //gezet, en anders blijft de DRINK staan  
         
-        tsManager.updateOrdersStatus(ct, tableId);
+        tsManager.updateOrdersStatus(ct, tableId,employeeId);
         
     }
 
@@ -233,7 +249,6 @@ public class ServiceGUI extends javax.swing.JPanel {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         refreshButton = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         drinksTable = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -244,7 +259,7 @@ public class ServiceGUI extends javax.swing.JPanel {
         cbTable = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        employeeField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -253,28 +268,23 @@ public class ServiceGUI extends javax.swing.JPanel {
         jButton4 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        invoiceTableNumber = new javax.swing.JTextField();
         jScrollPane4 = new javax.swing.JScrollPane();
         invoiceTable = new javax.swing.JTable();
         invoiceTotalPrice = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         invoiceHandle = new javax.swing.JButton();
         invoiceTableSearch = new javax.swing.JButton();
+        cbInvoice = new javax.swing.JComboBox<>();
+        refreshButton2 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         ordersTable = new javax.swing.JTable();
+        refreshButton3 = new javax.swing.JButton();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshButtonActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("Push");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
             }
         });
 
@@ -337,14 +347,19 @@ public class ServiceGUI extends javax.swing.JPanel {
         });
 
         cbTable.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbTable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbTableActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Drankjes");
 
         jLabel3.setText("Gerechten");
 
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        employeeField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                employeeFieldActionPerformed(evt);
             }
         });
 
@@ -359,55 +374,48 @@ public class ServiceGUI extends javax.swing.JPanel {
                         .addGap(135, 135, 135)
                         .addComponent(jLabel2)
                         .addGap(374, 374, 374)
-                        .addComponent(jLabel3)
-                        .addGap(366, 366, 366))
+                        .addComponent(jLabel3))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(77, 77, 77)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(60, 60, 60)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(refreshButton))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(77, 77, 77)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(60, 60, 60)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(radioDrink, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(radioMeal, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(cbTable, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jTextField4))
-                                    .addComponent(handleButton))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(radioDrink, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(radioMeal, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(cbTable, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(handleButton))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addComponent(refreshButton)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(refreshButton)
-                    .addComponent(jButton3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(radioDrink)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(radioMeal)
-                        .addGap(13, 13, 13)
-                        .addComponent(cbTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(handleButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(165, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGap(15, 15, 15)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(radioDrink)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(radioMeal)
+                                .addGap(13, 13, 13)
+                                .addComponent(cbTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(handleButton))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(refreshButton))
+                .addContainerGap(190, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Overzicht", jPanel1);
@@ -473,12 +481,6 @@ public class ServiceGUI extends javax.swing.JPanel {
 
         jLabel10.setText("Welke tafel wil afrekenen?");
 
-        invoiceTableNumber.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                invoiceTableNumberActionPerformed(evt);
-            }
-        });
-
         invoiceTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
@@ -521,6 +523,20 @@ public class ServiceGUI extends javax.swing.JPanel {
             }
         });
 
+        cbInvoice.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbInvoice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbInvoiceActionPerformed(evt);
+            }
+        });
+
+        refreshButton2.setText("Refresh");
+        refreshButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -529,24 +545,23 @@ public class ServiceGUI extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel10)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(53, 53, 53)
-                                .addComponent(invoiceTableNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jLabel10))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
-                        .addComponent(invoiceTableSearch)))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(invoiceTableSearch)
+                            .addComponent(cbInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(47, 47, 47)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(invoiceHandle)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addComponent(jLabel1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(invoiceTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(551, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(108, 108, 108)
+                        .addComponent(invoiceTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 470, Short.MAX_VALUE)
+                .addComponent(refreshButton2)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -555,18 +570,19 @@ public class ServiceGUI extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(invoiceTableNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cbInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
                         .addComponent(invoiceTableSearch))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(refreshButton2))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(invoiceTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(46, 46, 46)
                 .addComponent(invoiceHandle)
-                .addContainerGap(155, Short.MAX_VALUE))
+                .addContainerGap(159, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Afrekenen", jPanel3);
@@ -600,6 +616,13 @@ public class ServiceGUI extends javax.swing.JPanel {
         ));
         jScrollPane3.setViewportView(ordersTable);
 
+        refreshButton3.setText("Refresh");
+        refreshButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -607,13 +630,17 @@ public class ServiceGUI extends javax.swing.JPanel {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(515, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 434, Short.MAX_VALUE)
+                .addComponent(refreshButton3)
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(refreshButton3)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -639,17 +666,9 @@ public class ServiceGUI extends javax.swing.JPanel {
          // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-    InsertDAO.saveOrder();        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
-
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         refreshUIContent();
     }//GEN-LAST:event_refreshButtonActionPerformed
-
-    private void invoiceTableNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceTableNumberActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_invoiceTableNumberActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
        // TODO add your handling code here:
@@ -660,7 +679,7 @@ public class ServiceGUI extends javax.swing.JPanel {
             
             int OldTableNumber = Integer.parseInt(jTextField1.getText());
             int NewTableNumber = Integer.parseInt(jTextField3.getText());
-            TableDAO.changeTable(OldTableNumber, NewTableNumber);
+            tsManager.changeTable(OldTableNumber,NewTableNumber);
             
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -672,9 +691,9 @@ public class ServiceGUI extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_radioDrinkActionPerformed
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void employeeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }//GEN-LAST:event_employeeFieldActionPerformed
 
     private void invoiceTotalPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceTotalPriceActionPerformed
         // TODO add your handling code here:
@@ -684,27 +703,49 @@ public class ServiceGUI extends javax.swing.JPanel {
             DefaultTableModel tmInvoice = (DefaultTableModel)invoiceTable.getModel();        
         clearTable(tmInvoice);
         invoiceTotalPrice.setText("");
-        tsManager.invoiceTable(Integer.parseInt(invoiceTableNumber.getText())); 
+
+        
+        String str = (String)cbInvoice.getSelectedItem(); // get string zoals "Tafel 1"
+        str = str.replace("Tafel ", ""); // Verander "Tafel 1" naar "1"
+        int tableId = Integer.parseInt(str); // vernader "1" naar 1 (int)
+        
+        tsManager.invoiceTable(tableId); 
     }//GEN-LAST:event_invoiceHandleActionPerformed
 
     private void invoiceTableSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceTableSearchActionPerformed
         
         DefaultTableModel tmInvoice = (DefaultTableModel)invoiceTable.getModel();        
         clearTable(tmInvoice);
-        fillInvoiceTable();        // TODO add your handling code here:
+        fillInvoiceTable();    
     }//GEN-LAST:event_invoiceTableSearchActionPerformed
+
+    private void cbInvoiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbInvoiceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbInvoiceActionPerformed
+
+    private void cbTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTableActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbTableActionPerformed
+
+    private void refreshButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButton2ActionPerformed
+    refreshUIContent();
+    }//GEN-LAST:event_refreshButton2ActionPerformed
+
+    private void refreshButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButton3ActionPerformed
+    refreshUIContent();
+    }//GEN-LAST:event_refreshButton3ActionPerformed
 
             
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cbInvoice;
     private javax.swing.JComboBox<String> cbTable;
     private javax.swing.JTable drinksTable;
+    private javax.swing.JTextField employeeField;
     private javax.swing.JButton handleButton;
     private javax.swing.JButton invoiceHandle;
     private javax.swing.JTable invoiceTable;
-    private javax.swing.JTextField invoiceTableNumber;
     private javax.swing.JButton invoiceTableSearch;
     private javax.swing.JTextField invoiceTotalPrice;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -723,11 +764,12 @@ public class ServiceGUI extends javax.swing.JPanel {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JTable mealsTable;
     private javax.swing.JTable ordersTable;
     private javax.swing.JRadioButton radioDrink;
     private javax.swing.JRadioButton radioMeal;
     private javax.swing.JButton refreshButton;
+    private javax.swing.JButton refreshButton2;
+    private javax.swing.JButton refreshButton3;
     // End of variables declaration//GEN-END:variables
 }

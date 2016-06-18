@@ -7,6 +7,7 @@ package businesslogic;
 
 import com.sun.javafx.geom.AreaOp;
 import datastorage.OrderDAO;
+import datastorage.TableDAO;
 import domain.Order;
 import domain.Order.ConsumptionType;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class TableServiceManager {
     public void updateOrders()
     {
         this.orders = (new OrderDAO()).loadOrders();
+        //laad orders en zet in array
     }
     
     public ArrayList<Order> getOrders(ConsumptionType consumptionType)
@@ -35,9 +37,12 @@ public class TableServiceManager {
         
         for(Order o : this.orders)
         {
-            if (o.getConsumptionType() == consumptionType && o.getContentStatus() == 4)
+            //als gerecht/drank klopt, en contenstatus word geserveerd is, 
+            //voeg dan toe aan returnlist
+            if (o.getConsumptionType() == consumptionType && o.getContentStatus() == 3)
             {
                 returnList.add(o);
+                //voeg toe aan de arraylist die gereturnt word
             }
         }
         
@@ -51,8 +56,9 @@ public class TableServiceManager {
         for(Order o : this.orders)
         {
             int tafelId = o.getTableID();
-            
-            if ( returnList.contains(tafelId) == false && o.getContentStatus() == 4)
+            //als tafelid nog niet bestaat en moet geserveerd worden, voeg toe
+            //aan arraylist
+            if ( returnList.contains(tafelId) == false && o.getContentStatus() == 3)
             {
                 returnList.add(tafelId);
             }
@@ -61,6 +67,30 @@ public class TableServiceManager {
         Collections.sort(returnList);
         return returnList;
     }
+    
+        public ArrayList<Integer> getListOfSortedUniqueInvoiceTables()
+    {
+        ArrayList<Integer> returnList = new ArrayList<>();
+        
+        for(Order o : this.orders)
+        {
+            int tafelId = o.getTableID();
+            //als tafelid nog niet bestaat en wil betalen,
+            //voeg toe aan arraylist
+            if ( returnList.contains(tafelId) == false && o.GetWantsInvoice()== true)
+            {
+                returnList.add(tafelId);
+            }
+        }
+        
+        Collections.sort(returnList);
+        return returnList;
+    }
+    
+    
+    
+    
+    
     
         public ArrayList<Order> getUniqueOrders(ConsumptionType consumptionType)
     {
@@ -88,7 +118,7 @@ public class TableServiceManager {
         
         for(Order o : this.orders)
         {
-            if (o.getTableID() == tableID && o.getContentStatus() == 6)
+            if (o.getTableID() == tableID && o.GetWantsInvoice() == true)
             {
                 returnList.add(o);
             }
@@ -99,11 +129,16 @@ public class TableServiceManager {
         
         
     
-    public void updateOrdersStatus(ConsumptionType consumptionType, int tableID) {
-        (new OrderDAO()).updateStatus(consumptionType, tableID);
+    public void updateOrdersStatus(ConsumptionType consumptionType, int tableID, int employeeId) {
+        (new OrderDAO()).updateStatus(consumptionType, tableID, employeeId);
     }
     
     public void invoiceTable(int tableID) {
         (new OrderDAO()).invoiceTable(tableID);
     }
-}
+    
+    
+    public void changeTable(int OldTableNumber, int NewTableNumber){
+       
+    TableDAO.changeTable (OldTableNumber, NewTableNumber);
+}}

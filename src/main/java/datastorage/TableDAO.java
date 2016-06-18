@@ -26,13 +26,13 @@ public class TableDAO {
             if(connection.openConnection())
             {
                 // If a connection was successfully setup, execute the SELECT statement.    '%1$d' '%2$d', NewTableNumber, OldTableNumber
-                String s = String.format( "UPDATE `order` SET `Table`='%1$d' WHERE `Table`='%2$d'", NewTableNumber,OldTableNumber) ;
+                
+                //UPDATE `order` SET `Table`=4 WHERE `Table`=9 and `StatusNr` <> 6
+                String s = String.format( "UPDATE `order` SET `Table`='%1$d' WHERE `Table`='%2$d' AND `StatusNr` <> 6", NewTableNumber,OldTableNumber) ;
                 ResultSet resultset = connection.executeSQLInsertStatement(s);       
-                System.out.println("Test2");
   
                 connection.closeConnection();
             }
-            else{System.out.println("kanker");}
            }    
 }
         
