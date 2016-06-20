@@ -11,22 +11,21 @@ import domain.Order;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 
-
 /**
  *
  * @author Ray
  */
 public class main {
-        public static void main(String[] args) {
-            
-       
-       //Maakt nieuwe JFrame, contentpane is ServiceGUI
-       JFrame Frame = new JFrame(); 
-       Frame.setSize(1000, 500);
-       Frame.setDefaultCloseOperation(
-       JFrame.EXIT_ON_CLOSE);    
-       Frame.setTitle("Hartige Hap");
-       Frame.setContentPane(new presentation.ServiceGUI());
-       Frame.setVisible(true);
+
+    public static void main(String[] args) {
+
+        //Creates new JFrame, contentpane is ServiceGUI
+        JFrame Frame = new JFrame();
+        Frame.setSize(1000, 500);
+        Frame.setDefaultCloseOperation(
+                JFrame.EXIT_ON_CLOSE);
+        Frame.setTitle("Hartige Hap");
+        Frame.setContentPane(new presentation.ServiceGUI());
+        Frame.setVisible(true);
     }
 }

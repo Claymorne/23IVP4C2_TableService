@@ -6,14 +6,8 @@
 package presentation;
 
 import businesslogic.TableServiceManager;
-import com.sun.javafx.geom.Curve;
-import datastorage.InsertDAO;
 import domain.Order;
-import datastorage.DatabaseConnection;
-import datastorage.TableDAO;
 import domain.Order.ConsumptionType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ButtonGroup;
@@ -27,180 +21,156 @@ import javax.swing.table.*;
  * @author Ray
  */
 public class ServiceGUI extends javax.swing.JPanel {
+
     TableServiceManager tsManager;
     ButtonGroup consumptionGroup;
+
     /**
      * Creates new form ServiceGUI
      */
     public ServiceGUI() {
-        tsManager = new TableServiceManager(); //Managerklasse wordt object
-        initComponents(); // Maakt alle componenten
-        initConsumptionGroup(); // Maakt de gerecht/drank kies knoppen
-        refreshUIContent(); // dit wordt door de GUI designer aangeroepen
-    }      
+        tsManager = new TableServiceManager(); //Managerclass is object
+        initComponents(); // Creates all components
+        initConsumptionGroup(); // Creates the dish/drink choose button
+        refreshUIContent(); // This gets invoked by the GUI designer
+    }
 
     private void initConsumptionGroup() {
-        consumptionGroup = new ButtonGroup();//maakt buttongroup
-        
-        //Voegt de radio buttons toe, om te kiezen of het afgeronde gaat over
-        //drankjes of gerechten.
+        consumptionGroup = new ButtonGroup();//Makes buttongroup
+
+        //add the radio buttons , to choose if the drinks and dishes finishes or not.
         consumptionGroup.add(radioDrink);
         consumptionGroup.add(radioMeal);
-        
-        radioDrink.setSelected(true); //zet default op drank, reden omdat deze het vaakst wordt gedaan.
+
+        radioDrink.setSelected(true); //Put default to drinks, reason is because this is done the most.
     }
-    
-    private void initComboBox()
-    {
-        //verwijdert eerst alles uit de ComboBox
+
+    private void initComboBox() {
+        //This Deletes everything from the ComboBox first. 
         cbTable.removeAllItems();
         cbInvoice.removeAllItems();
-        //Alleen bestaande tafels waar wat besteld is staat in de combobox
-        for (int i : tsManager.getListOfSortedUniqueTables() )
-        {
+        //Only the existing tables where their are orders are shown in the ComboBox 
+        for (int i : tsManager.getListOfSortedUniqueTables()) {
             cbTable.addItem("Tafel " + i);
         }
-        
-                for (int i : tsManager.getListOfSortedUniqueInvoiceTables() )
-        {
+
+        for (int i : tsManager.getListOfSortedUniqueInvoiceTables()) {
             cbInvoice.addItem("Tafel " + i);
         }
     }
-    
-    
-    
-    
-    
+
     private void refreshUIContent() {
-        clearAllTables(); //Eerst word alles leeggehaald
-        tsManager.updateOrders(); // Laad dan de database opnieuw alles lezen
-        initComboBox(); // En dan de Combobox vullen
+        clearAllTables(); //Everything will be cleared first
+        tsManager.updateOrders(); // Then load the database again and then scan everything
+        initComboBox(); // Then fill the Combobox
 
-       
-        DefaultTableModel tmDrinks = (DefaultTableModel)drinksTable.getModel();
-        DefaultTableModel tmMeals = (DefaultTableModel)mealsTable.getModel();
-        DefaultTableModel tmOrders = (DefaultTableModel)ordersTable.getModel();
+        DefaultTableModel tmDrinks = (DefaultTableModel) drinksTable.getModel();
+        DefaultTableModel tmMeals = (DefaultTableModel) mealsTable.getModel();
+        DefaultTableModel tmOrders = (DefaultTableModel) ordersTable.getModel();
 
-        //vult de tabellen
+        //Fills the tables 
         fillTable(tmMeals, Order.ConsumptionType.MEAL);
         fillTable(tmDrinks, Order.ConsumptionType.DRINK);
         fillOrderTable(tmOrders, Order.ConsumptionType.MEAL);
-        
+
     }
 
     private void fillTable(DefaultTableModel tm, Order.ConsumptionType consumptionType) {
         int rowIndex = 0;
-        
-        for(Order o : tsManager.getOrders(consumptionType) )
-        {
-            String tafelNummer = "" + o.getTableID(); //tafelnummer
-            String gerechtNaam = "" + o.getConsumptionName(); //naam consumptie
-            String bestellingID = "" + o.getOrderID(); //BestellingID
 
+        for (Order o : tsManager.getOrders(consumptionType)) {
+            String tafelNummer = "" + o.getTableID(); //Tablennumber
+            String gerechtNaam = "" + o.getConsumptionName(); //Name consumption
+            String bestellingID = "" + o.getOrderID(); //OrderID
 
             Object[] row = new Object[]{tafelNummer, gerechtNaam, bestellingID};
-                //rows worden gevuld
+            //rows will be filled
             tm.insertRow(rowIndex, row);
 
             rowIndex += 1;
         }
     }
-    
-        private void fillOrderTable(DefaultTableModel tm, ConsumptionType GERECHT) {
+
+    private void fillOrderTable(DefaultTableModel tm, ConsumptionType GERECHT) {
         int rowIndex = 0;
-        
-        for(Order o : tsManager.getUniqueOrders(ConsumptionType.MEAL))
-        {
-            String tafelNummer = "" + o.getTableID(); //Tafel
-            String soortBestelling = "Gerecht" ; //Soort
-            String contentStatus = o.getContentStatusString(); //status
-                                                      //status
 
-            Object[] row = new Object[]{tafelNummer,soortBestelling, contentStatus};
-                //rows worden gevuld
+        for (Order o : tsManager.getUniqueOrders(ConsumptionType.MEAL)) {
+            String tableNumber = "" + o.getTableID(); //Table
+            String orderType = "Gerecht"; //Type
+            String contentStatus = o.getContentStatusString(); //Status
+            //Status
+
+            Object[] row = new Object[]{tableNumber, orderType, contentStatus};
+            //rows will be filled
             tm.insertRow(rowIndex, row);
 
             rowIndex += 1;
         }
-        
-        for(Order o : tsManager.getUniqueOrders(ConsumptionType.DRINK))
-        {
-            String tafelNummer = "" + o.getTableID(); //Tafel
-            String soortBestelling = "Drank" ; //Soort
-            String contentStatus = o.getContentStatusString(); //status
-            
-            Object[] row = new Object[]{tafelNummer, soortBestelling, contentStatus};
-                //rows worden gevuld
+
+        for (Order o : tsManager.getUniqueOrders(ConsumptionType.DRINK)) {
+            String tableNumber = "" + o.getTableID(); //Table
+            String orderType = "Drank"; //Type
+            String contentStatus = o.getContentStatusString(); //Status
+
+            Object[] row = new Object[]{tableNumber, orderType, contentStatus};
+            //rows will be filled
             tm.insertRow(rowIndex, row);
 
             rowIndex += 1;
         }
-        
+
         sortOrderTable();
-            }
-    
-        private void sortOrderTable(){
-        
-        DefaultTableModel tmOrders = (DefaultTableModel)ordersTable.getModel();
-        
-        
-        
+    }
+
+    private void sortOrderTable() {
+
+        DefaultTableModel tmOrders = (DefaultTableModel) ordersTable.getModel();
+
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(tmOrders);
-        
-        
-            ordersTable.setRowSorter(sorter);
-            List<RowSorter.SortKey> sortKeys = new ArrayList<>();
- 
-            int columnIndexToSort = 0;
-            sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.ASCENDING));
- 
-            sorter.setSortKeys(sortKeys);
-            sorter.sort();
-        }
-    
-        
-        private void fillInvoiceTable(){
-                    
-            DefaultTableModel tmInvoice = (DefaultTableModel)invoiceTable.getModel();
-            
-            int rowIndex = 0;
-            double totalPrice = 0;
-            
-            
-            
-            String str = (String)cbInvoice.getSelectedItem(); // get string zoals "Tafel 1"
-            str = str.replace("Tafel ", ""); // Verander "Tafel 1" naar "1"
-            int tableId = Integer.parseInt(str); // vernader "1" naar 1 (int)
-            
-            
-                for(Order o : tsManager.getInvoiceOrders(tableId) )
-        {
-            String gerechtNaam = "" + o.getConsumptionName(); //naam consumptie
-            String price = "€ " + o.getPrice(); //prijs
-            
+
+        ordersTable.setRowSorter(sorter);
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+
+        int columnIndexToSort = 0;
+        sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.ASCENDING));
+
+        sorter.setSortKeys(sortKeys);
+        sorter.sort();
+    }
+
+    private void fillInvoiceTable() {
+
+        DefaultTableModel tmInvoice = (DefaultTableModel) invoiceTable.getModel();
+
+        int rowIndex = 0;
+        double totalPrice = 0;
+
+        String str = (String) cbInvoice.getSelectedItem(); // get the string like "Table 1"
+        str = str.replace("Tafel ", ""); // Change "Table 1" to "1"
+        int tableId = Integer.parseInt(str); // Change "1" to 1 (int)
+
+        for (Order o : tsManager.getInvoiceOrders(tableId)) {
+            String consumptionName = "" + o.getConsumptionName(); //Name consumption
+            String price = "€ " + o.getPrice(); //Price
+
             totalPrice += o.getPrice();
             invoiceTotalPrice.setText("€ " + totalPrice);
 
-
-            Object[] row = new Object[]{gerechtNaam, price};
-                //rows worden gevuld
+            Object[] row = new Object[]{consumptionName, price};
+            //rows will be filled
             tmInvoice.insertRow(rowIndex, row);
 
             rowIndex += 1;
         }
-        
-        
-            
-        }
-        
-        
-        
+
+    }
+
     private void clearAllTables() {
-        DefaultTableModel tmDrinks = (DefaultTableModel)drinksTable.getModel();
-        DefaultTableModel tmMeals = (DefaultTableModel)mealsTable.getModel();
-        DefaultTableModel tmOrders = (DefaultTableModel)ordersTable.getModel();
-        
-        //haalt alle tables leeg
+        DefaultTableModel tmDrinks = (DefaultTableModel) drinksTable.getModel();
+        DefaultTableModel tmMeals = (DefaultTableModel) mealsTable.getModel();
+        DefaultTableModel tmOrders = (DefaultTableModel) ordersTable.getModel();
+
+        //Clears all tables
         clearTable(tmDrinks);
         clearTable(tmMeals);
         clearTable(tmOrders);
@@ -208,33 +178,30 @@ public class ServiceGUI extends javax.swing.JPanel {
 
     private void clearTable(DefaultTableModel tm) {
         int rowCount = tm.getRowCount();
-        //functie om een table te legen
-        for (int i = 0; i < rowCount; i++)
-        {
+        //Function to clear a table
+        for (int i = 0; i < rowCount; i++) {
             tm.removeRow(0);
         }
     }
-    
-    private void updateOrderStatus()
-    {
-        String str = (String)cbTable.getSelectedItem(); // get string zoals "Tafel 1"
-        str = str.replace("Tafel ", ""); // Verander "Tafel 1" naar "1"
-        int tableId = Integer.parseInt(str); // vernader "1" naar 1 (int)
-        
-        //verkrijg employeenr
+
+    private void updateOrderStatus() {
+        String str = (String) cbTable.getSelectedItem(); // get a string like "Table 1"
+        str = str.replace("Tafel ", ""); // Change "Table 1" to "1"
+        int tableId = Integer.parseInt(str); // Change "1" to 1 (int)
+
+        //Get employee
         int employeeId = Integer.parseInt(employeeField.getText());
-        
+
         // default value
         ConsumptionType ct = Order.ConsumptionType.DRINK;
-        
-        if (radioMeal.isSelected() == true)
-        {
+
+        if (radioMeal.isSelected() == true) {
             ct = Order.ConsumptionType.MEAL;
-        } //als meal radiobutton is geselecteerd dan word de type op MEAL
-          //gezet, en anders blijft de DRINK staan  
-        
-        tsManager.updateOrdersStatus(ct, tableId,employeeId);
-        
+        } //If meal radiobutton is selected then the type will be put on MEAL,
+        //and otherwise it will stay on DRINK
+
+        tsManager.updateOrdersStatus(ct, tableId, employeeId);
+
     }
 
     /**
@@ -257,15 +224,15 @@ public class ServiceGUI extends javax.swing.JPanel {
         radioMeal = new javax.swing.JRadioButton();
         handleButton = new javax.swing.JButton();
         cbTable = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        drinkLabel = new javax.swing.JLabel();
+        mealLabel = new javax.swing.JLabel();
         employeeField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        oldTableField = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
+        newTableField = new javax.swing.JTextField();
+        updateTableButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -353,9 +320,9 @@ public class ServiceGUI extends javax.swing.JPanel {
             }
         });
 
-        jLabel2.setText("Drankjes");
+        drinkLabel.setText("Drankjes");
 
-        jLabel3.setText("Gerechten");
+        mealLabel.setText("Gerechten");
 
         employeeField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -372,9 +339,9 @@ public class ServiceGUI extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(135, 135, 135)
-                        .addComponent(jLabel2)
+                        .addComponent(drinkLabel)
                         .addGap(374, 374, 374)
-                        .addComponent(jLabel3))
+                        .addComponent(mealLabel))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(77, 77, 77)
@@ -398,8 +365,8 @@ public class ServiceGUI extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(drinkLabel)
+                            .addComponent(mealLabel))
                         .addGap(15, 15, 15)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -422,24 +389,24 @@ public class ServiceGUI extends javax.swing.JPanel {
 
         jLabel8.setText("Verander tafel ");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        oldTableField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                oldTableFieldActionPerformed(evt);
             }
         });
 
         jLabel9.setText("naar tafel");
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        newTableField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                newTableFieldActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Update");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        updateTableButton.setText("Update");
+        updateTableButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                updateTableButtonActionPerformed(evt);
             }
         });
 
@@ -453,14 +420,14 @@ public class ServiceGUI extends javax.swing.JPanel {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(oldTableField, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(newTableField, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(54, 54, 54)
-                        .addComponent(jButton4)))
+                        .addComponent(updateTableButton)))
                 .addContainerGap(729, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -469,11 +436,11 @@ public class ServiceGUI extends javax.swing.JPanel {
                 .addGap(29, 29, 29)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(oldTableField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(newTableField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jButton4)
+                .addComponent(updateTableButton)
                 .addContainerGap(359, Short.MAX_VALUE))
         );
 
@@ -662,29 +629,28 @@ public class ServiceGUI extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    private void oldTableFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oldTableFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_oldTableFieldActionPerformed
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         refreshUIContent();
     }//GEN-LAST:event_refreshButtonActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
-       // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    private void newTableFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newTableFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_newTableFieldActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void updateTableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateTableButtonActionPerformed
 
-            
-            int OldTableNumber = Integer.parseInt(jTextField1.getText());
-            int NewTableNumber = Integer.parseInt(jTextField3.getText());
-            tsManager.changeTable(OldTableNumber,NewTableNumber);
-            
-    }//GEN-LAST:event_jButton4ActionPerformed
+        int OldTableNumber = Integer.parseInt(oldTableField.getText());
+        int NewTableNumber = Integer.parseInt(newTableField.getText());
+        tsManager.changeTable(OldTableNumber, NewTableNumber);
+
+    }//GEN-LAST:event_updateTableButtonActionPerformed
 
     private void handleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_handleButtonActionPerformed
-                updateOrderStatus();
+        updateOrderStatus();
     }//GEN-LAST:event_handleButtonActionPerformed
 
     private void radioDrinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioDrinkActionPerformed
@@ -700,23 +666,28 @@ public class ServiceGUI extends javax.swing.JPanel {
     }//GEN-LAST:event_invoiceTotalPriceActionPerformed
 
     private void invoiceHandleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceHandleActionPerformed
-            DefaultTableModel tmInvoice = (DefaultTableModel)invoiceTable.getModel();        
+        DefaultTableModel tmInvoice = (DefaultTableModel) invoiceTable.getModel();
         clearTable(tmInvoice);
         invoiceTotalPrice.setText("");
 
-        
-        String str = (String)cbInvoice.getSelectedItem(); // get string zoals "Tafel 1"
-        str = str.replace("Tafel ", ""); // Verander "Tafel 1" naar "1"
-        int tableId = Integer.parseInt(str); // vernader "1" naar 1 (int)
-        
-        tsManager.invoiceTable(tableId); 
+        String str = (String) cbInvoice.getSelectedItem(); // get string like "Table 1"
+        str = str.replace("Tafel ", ""); // Change "Table 1" to "1"
+        int tableId = Integer.parseInt(str); // Change "1" to 1 (int)
+
+        double totalPrice = 0;
+        for (Order o : tsManager.getInvoiceOrders(tableId)) {
+
+            totalPrice += o.getPrice();
+        }
+
+        tsManager.invoiceTable(tableId, totalPrice);
     }//GEN-LAST:event_invoiceHandleActionPerformed
 
     private void invoiceTableSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoiceTableSearchActionPerformed
-        
-        DefaultTableModel tmInvoice = (DefaultTableModel)invoiceTable.getModel();        
+
+        DefaultTableModel tmInvoice = (DefaultTableModel) invoiceTable.getModel();
         clearTable(tmInvoice);
-        fillInvoiceTable();    
+        fillInvoiceTable();
     }//GEN-LAST:event_invoiceTableSearchActionPerformed
 
     private void cbInvoiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbInvoiceActionPerformed
@@ -728,17 +699,18 @@ public class ServiceGUI extends javax.swing.JPanel {
     }//GEN-LAST:event_cbTableActionPerformed
 
     private void refreshButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButton2ActionPerformed
-    refreshUIContent();
+        refreshUIContent();
     }//GEN-LAST:event_refreshButton2ActionPerformed
 
     private void refreshButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButton3ActionPerformed
-    refreshUIContent();
+        refreshUIContent();
     }//GEN-LAST:event_refreshButton3ActionPerformed
 
-            
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbInvoice;
     private javax.swing.JComboBox<String> cbTable;
+    private javax.swing.JLabel drinkLabel;
     private javax.swing.JTable drinksTable;
     private javax.swing.JTextField employeeField;
     private javax.swing.JButton handleButton;
@@ -746,11 +718,8 @@ public class ServiceGUI extends javax.swing.JPanel {
     private javax.swing.JTable invoiceTable;
     private javax.swing.JButton invoiceTableSearch;
     private javax.swing.JTextField invoiceTotalPrice;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -762,14 +731,16 @@ public class ServiceGUI extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JLabel mealLabel;
     private javax.swing.JTable mealsTable;
+    private javax.swing.JTextField newTableField;
+    private javax.swing.JTextField oldTableField;
     private javax.swing.JTable ordersTable;
     private javax.swing.JRadioButton radioDrink;
     private javax.swing.JRadioButton radioMeal;
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton refreshButton2;
     private javax.swing.JButton refreshButton3;
+    private javax.swing.JButton updateTableButton;
     // End of variables declaration//GEN-END:variables
 }

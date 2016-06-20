@@ -11,24 +11,21 @@ package domain;
  */
 public class Order {
 
-
-
     private int orderID, orderContentID, contentStatus;
     private int tableID;
     private String consumptionName;
     private ConsumptionType consumptionType;
     private double price;
     private boolean wantsInvoice;
-            
+
     public enum ConsumptionType {
         MEAL,
         DRINK
     };
-    
-        public Order(int OrderID , int TableID , String consumptionName,
-                ConsumptionType consumptionType, int orderContentID,
-                int contentStatus, double price, boolean wantsinvoice)
-    {
+
+    public Order(int OrderID, int TableID, String consumptionName,
+            ConsumptionType consumptionType, int orderContentID,
+            int contentStatus, double price, boolean wantsinvoice) {
         this.orderID = OrderID;
         this.tableID = TableID;
         this.consumptionName = consumptionName;
@@ -36,8 +33,8 @@ public class Order {
         this.orderContentID = orderContentID;
         this.contentStatus = contentStatus;
         this.price = price;
-        this.wantsInvoice =  wantsinvoice;
-        
+        this.wantsInvoice = wantsinvoice;
+
     }
 
     public double getPrice() {
@@ -79,49 +76,47 @@ public class Order {
     public ConsumptionType getConsumptionType() {
         return consumptionType;
     }
-    
-        public boolean GetWantsInvoice() {
+
+    public boolean GetWantsInvoice() {
         return wantsInvoice;
     }
-
 
     public void setConsumptionType(ConsumptionType consumptionType) {
         this.consumptionType = consumptionType;
     }
-    
-        public int getContentStatus() {
+
+    public int getContentStatus() {
         return contentStatus;
     }
-        public String getContentStatusString() {
-            
-            if (contentStatus == 0) {
-                return "Nog niet besteld";
-            }
-            
-            if (contentStatus == 1) {
-                return "Is besteld";
-            }
-            
-            if (contentStatus == 2) {
-                return "Wordt bereid";
-            }
-            
-            if (contentStatus == 3) {
-                return "Wordt opgediend";
-            }
-            
-            if (contentStatus == 4) {
-                return "Opgediend";
-            }
-            
-            if (contentStatus == 5) {
-                return "Betaald";
-            }
-            else{
-                return "Error: Geen contentStatus";
-            }
-            
+
+    public String getContentStatusString() {
+
+        if (contentStatus == 0) {
+            return "Nog niet besteld";
         }
-        
-        
+
+        if (contentStatus == 1) {
+            return "Is besteld";
+        }
+
+        if (contentStatus == 2) {
+            return "Wordt bereid";
+        }
+
+        if (contentStatus == 3) {
+            return "Wordt opgediend";
+        }
+
+        if (contentStatus == 4) {
+            return "Opgediend";
+        }
+
+        if (contentStatus == 5) {
+            return "Betaald";
+        } else {
+            return "Error: Geen contentStatus";
+        }
+
+    }
+
 }

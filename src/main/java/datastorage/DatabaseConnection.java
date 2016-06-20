@@ -5,170 +5,137 @@
  */
 package datastorage;
 
-
 import java.sql.*;
+
 /**
  *
  * @author Ray
  */
 public class DatabaseConnection {
+
     private Connection connection;
-    
+
     // The Statement object has been defined as a field because some methods
     // may return a ResultSet object. If so, the statement object may not
     // be closed as you would do when it was a local variable in the query
     // execution method.
     private Statement statement;
-    
-    public DatabaseConnection()
-    {
+
+    public DatabaseConnection() {
         connection = null;
         statement = null;
     }
-    
-    public boolean openConnection()
-    {
+
+    public boolean openConnection() {
         boolean result = false;
 
-        if(connection == null)
-        {
-            try
-            {   
+        if (connection == null) {
+            try {
                 // Try to create a connection with the library database
                 connection = DriverManager.getConnection(
-                    "jdbc:mysql://145.48.6.148/hartige_hap" , "vp4c2", "Avans93!");
-                
+                        "jdbc:mysql://145.48.6.148/hartige_hap", "vp4c2", "Avans93!");
+
                 //"jdbc:mysql://145.48.6.148/hartige_hap" , "root", "");
-                if(connection != null)
-                {
+                if (connection != null) {
                     statement = connection.createStatement();
                 }
-                
+
                 result = true;
-            }
-            catch(SQLException e)
-            {
+            } catch (SQLException e) {
                 System.out.println(e);
                 result = false;
             }
-        }
-        else
-        {
+        } else {
             // A connection was already initalized.
             result = true;
         }
-        
+
         return result;
     }
-    
-    public boolean connectionIsOpen()
-    {
+
+    public boolean connectionIsOpen() {
         boolean open = false;
-        
-        if(connection != null && statement != null)
-        {
-            try
-            {
+
+        if (connection != null && statement != null) {
+            try {
                 open = !connection.isClosed() && !statement.isClosed();
-            }
-            catch(SQLException e)
-            {
+            } catch (SQLException e) {
                 System.out.println(e);
                 open = false;
             }
         }
         // Else, at least one the connection or statement fields is null, so
         // no valid connection.
-        
+
         return open;
     }
-    
-    public void closeConnection()
-    {
-        try
-        {
+
+    public void closeConnection() {
+        try {
             statement.close();
-            
+
             // Close the connection
             connection.close();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
-    
-    public ResultSet executeSQLSelectStatement(String query)
-    {
+
+    public ResultSet executeSQLSelectStatement(String query) {
         ResultSet resultset = null;
-        
+
         // First, check whether a some query was passed and the connection with
         // the database.
-        if(query != null && connectionIsOpen())
-        {
+        if (query != null && connectionIsOpen()) {
             // Then, if succeeded, execute the query.
-            try
-            {
+            try {
                 resultset = statement.executeQuery(query);
-            }
-            catch(SQLException e)
-            {
+            } catch (SQLException e) {
                 System.out.println(e);
                 resultset = null;
             }
         }
-        
+
         return resultset;
     }
-    
-    public boolean executeSQLDeleteStatement(String query)
-    {
+
+    public boolean executeSQLDeleteStatement(String query) {
         boolean result = false;
-        
+
         // First, check whether a some query was passed and the connection with
         // the database.
-        if(query != null && connectionIsOpen())
-        {
+        if (query != null && connectionIsOpen()) {
             // Then, if succeeded, execute the query.
-            try
-            {
+            try {
                 statement.executeUpdate(query);
                 result = true;
-            }
-            catch(SQLException e)
-            {
+            } catch (SQLException e) {
                 System.out.println(e);
                 result = false;
             }
         }
-        
+
         return result;
     }
-    
-    public boolean executeSQLUpdateStatement(String query)
-    {
+
+    public boolean executeSQLUpdateStatement(String query) {
         return executeSQLDeleteStatement(query);
-    }   
-    
-    
-    public ResultSet executeSQLInsertStatement(String query)
-    {
+    }
+
+    public ResultSet executeSQLInsertStatement(String query) {
         ResultSet rs = null;
-       
+
         // First, check whether a some query was passed and the connection with
         // the database.
-        if(query != null && connectionIsOpen())
-        {
+        if (query != null && connectionIsOpen()) {
             // Then, if succeeded, execute the query.
-            try
-            {
+            try {
                 statement.execute(query);
-            }
-            catch(SQLException e)
-            {
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
-       
+
         return rs;
     }
 }

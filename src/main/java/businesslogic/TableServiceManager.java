@@ -5,7 +5,6 @@
  */
 package businesslogic;
 
-import com.sun.javafx.geom.AreaOp;
 import datastorage.OrderDAO;
 import datastorage.TableDAO;
 import domain.Order;
@@ -18,127 +17,110 @@ import java.util.Collections;
  * @author Ray
  */
 public class TableServiceManager {
+
     ArrayList<Order> orders;
-    
+
     public TableServiceManager() {
         updateOrders();
     }
 
-
-    public void updateOrders()
-    {
+    public void updateOrders() {
         this.orders = (new OrderDAO()).loadOrders();
-        //laad orders en zet in array
+        //load orders and put them in an array
     }
-    
-    public ArrayList<Order> getOrders(ConsumptionType consumptionType)
-    {
+
+    public ArrayList<Order> getOrders(ConsumptionType consumptionType) {
         ArrayList<Order> returnList = new ArrayList<>();
-        
-        for(Order o : this.orders)
-        {
-            //als gerecht/drank klopt, en contenstatus word geserveerd is, 
-            //voeg dan toe aan returnlist
-            if (o.getConsumptionType() == consumptionType && o.getContentStatus() == 3)
-            {
+
+        for (Order o : this.orders) {
+            //if the dish/drink (type) is equal to the type you want  , and the contentstatus is "will be served", 
+            //then add them to the returnlist
+            if (o.getConsumptionType() == consumptionType && o.getContentStatus() == 3) {
                 returnList.add(o);
-                //voeg toe aan de arraylist die gereturnt word
+                //add to the returned arraylist 
             }
         }
-        
+
         return returnList;
     }
-    
-    public ArrayList<Integer> getListOfSortedUniqueTables()
-    {
+
+    public ArrayList<Integer> getListOfSortedUniqueTables() {
         ArrayList<Integer> returnList = new ArrayList<>();
-        
-        for(Order o : this.orders)
-        {
+
+        for (Order o : this.orders) {
             int tafelId = o.getTableID();
-            //als tafelid nog niet bestaat en moet geserveerd worden, voeg toe
-            //aan arraylist
-            if ( returnList.contains(tafelId) == false && o.getContentStatus() == 3)
-            {
+            //If tableID does not exist yet and still must be served
+            //then add to the arraylist
+            if (returnList.contains(tafelId) == false && o.getContentStatus() == 3) {
                 returnList.add(tafelId);
             }
         }
-        
+
         Collections.sort(returnList);
         return returnList;
     }
-    
-        public ArrayList<Integer> getListOfSortedUniqueInvoiceTables()
-    {
+
+    public ArrayList<Integer> getListOfSortedUniqueInvoiceTables() {
         ArrayList<Integer> returnList = new ArrayList<>();
-        
-        for(Order o : this.orders)
-        {
+
+        for (Order o : this.orders) {
             int tafelId = o.getTableID();
-            //als tafelid nog niet bestaat en wil betalen,
-            //voeg toe aan arraylist
-            if ( returnList.contains(tafelId) == false && o.GetWantsInvoice()== true)
-            {
+            //If tableID does not exist yet and you want to pay
+            //then add to the arraylist
+            if (returnList.contains(tafelId) == false && o.GetWantsInvoice() == true) {
                 returnList.add(tafelId);
             }
         }
-        
+
         Collections.sort(returnList);
         return returnList;
     }
-    
-    
-    
-    
-    
-    
-        public ArrayList<Order> getUniqueOrders(ConsumptionType consumptionType)
-    {
+
+    public ArrayList<Order> getUniqueOrders(ConsumptionType consumptionType) {
         ArrayList<Order> returnList = new ArrayList<>();
-        
+
         ArrayList UniqueOrders = new ArrayList();
-        for(Order o : this.orders)
-        {
-            if (o.getConsumptionType() == consumptionType && UniqueOrders.contains(o.getOrderID()) == false)
-            {
-                
+        for (Order o : this.orders) {
+            if (o.getConsumptionType() == consumptionType && UniqueOrders.contains(o.getOrderID()) == false) {
+                //If the dish/drink is equal to the ordertype you want, and the OrderID does not is unique (does not already exist),
+                // then add to the arraylist.
                 returnList.add(o);
                 int uniqueOrderID = o.getOrderID();
                 UniqueOrders.add(uniqueOrderID);
-                
+
             }
         }
-        
+
         return returnList;
     }
-    
-        public ArrayList<Order> getInvoiceOrders(int tableID)
-    {
+
+    public ArrayList<Order> getInvoiceOrders(int tableID) {
         ArrayList<Order> returnList = new ArrayList<>();
-        
-        for(Order o : this.orders)
-        {
-            if (o.getTableID() == tableID && o.GetWantsInvoice() == true)
-            {
+
+        for (Order o : this.orders) {
+            // If tableID equals the tableIDyou want and they want a bill,
+            // then add to the arraylist.
+            if (o.getTableID() == tableID && o.GetWantsInvoice() == true) {
                 returnList.add(o);
             }
         }
-        
+
         return returnList;
     }
-        
-        
-    
+
     public void updateOrdersStatus(ConsumptionType consumptionType, int tableID, int employeeId) {
         (new OrderDAO()).updateStatus(consumptionType, tableID, employeeId);
+        //The order status information will be updated
     }
-    
-    public void invoiceTable(int tableID) {
-        (new OrderDAO()).invoiceTable(tableID);
+
+    public void invoiceTable(int tableID, double totalCost) {
+        (new OrderDAO()).invoiceTable(tableID, totalCost);
+        //The bill information will be updated
     }
-    
-    
-    public void changeTable(int OldTableNumber, int NewTableNumber){
-       
-    TableDAO.changeTable (OldTableNumber, NewTableNumber);
-}}
+
+    public void changeTable(int OldTableNumber, int NewTableNumber) {
+
+        TableDAO.changeTable(OldTableNumber, NewTableNumber);
+        //The tablenumber change will be updated
+    }
+}

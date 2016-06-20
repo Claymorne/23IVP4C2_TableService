@@ -47,8 +47,8 @@ public class OrderDAO {
 
             ResultSet resultset = connection.executeSQLSelectStatement(
                     "SELECT * FROM `order`,`consumption`,`consumptionorder`,`table`\n"
-                    + "WHERE `order`.`OrderNumber` = `consumptionorder`.`OrderNumber` AND `consumptionorder`.`ConsumptionNumber` = `consumption`.`ConsumptionNumber` AND `order`.`TableNumber` = `table`.`TableNumber`");
-            //Selecteert alle orders en bijbehorende content
+                    + "WHERE `order`.`OrderNumber` = `consumptionorder`.`OrderNumber` AND `consumptionorder`.`ConsumptionNumber` = `consumption`.`ConsumptionNumber` AND `order`.`TableNumber` = `table`.`TableNumber` AND StatusNumber <> 6");
+            //Select all the orders and their content
 
             try {
                 while (resultset.next()) {
@@ -60,7 +60,7 @@ public class OrderDAO {
                     int orderContentID = resultset.getInt("consumptionorderid");
                     int contentStatus = resultset.getInt("ConsumptionStatus");
                     double price = resultset.getInt("ConsumptionPrice");
-                    boolean wantsinvoice = resultset.getBoolean("Status");
+                    boolean wantsinvoice = resultset.getBoolean("Pay");
 
                     ConsumptionType consumptionType = ConsumptionType.MEAL;
 
@@ -88,9 +88,9 @@ public class OrderDAO {
                         consumptionType = ConsumptionType.DRINK;
                     }
 
-                    //maakt nieuw order met verkregen gegegevens
+                    //Creates a new order with their obtained information
                     Order o = new Order(orderID, TableID, consumptionName, consumptionType, orderContentID, contentStatus, price, wantsinvoice);
-                    //voegt ze toe in arraylist
+                    //add them to the arraylist
                     orderLijst.add(o);
 
                 }
@@ -102,7 +102,7 @@ public class OrderDAO {
         }
 
         return orderLijst;
-        //geeft array van orders 
+        //Give array of the orders 
     }
 
     public void updateStatus(ConsumptionType consumptionType, int tableID, int employeeId) {
@@ -110,7 +110,7 @@ public class OrderDAO {
         DatabaseConnection connection = new DatabaseConnection();
         if (connection.openConnection()) {
 
-            //update de status van word geserveerd naar is geserveerd
+            //The status will be updated from "will be served" to "served"
             if (consumptionType == ConsumptionType.MEAL) {
                 String s = String.format("UPDATE `consumptionorder` "
                         + "INNER JOIN `consumption` "
@@ -129,7 +129,7 @@ public class OrderDAO {
                         + "OR `consumption`.ConsumptionType = 'dessert')", employeeId, tableID);
                 boolean succesfulupdate = connection.executeSQLDeleteStatement(s);
 
-                //updateOrderHelper(tableID);
+                //update OrderHelper(tableID);
             }
 
             if (consumptionType == ConsumptionType.DRINK) {
@@ -158,13 +158,14 @@ public class OrderDAO {
                     consumptionType.toString().toLowerCase(), tableID);
             boolean succesfulUpdate = connection.executeSQLUpdateStatement(s);
 
-            //voert updateorderhelper uit
+            //Runs the updateOrderHelper
             updateOrderHelper(tableID);  */
 
             connection.closeConnection();
         }
     }
 
+    /*
     public void updateOrderHelper(int tableID) {
 
         DatabaseConnection connection = new DatabaseConnection();
@@ -208,22 +209,21 @@ public class OrderDAO {
             connection.closeConnection();
         }
 
-    }
+    } */
 
-    public void invoiceTable(int tableID) {
+    public void invoiceTable(int tableID, double totalCost) {
 
         DatabaseConnection connection = new DatabaseConnection();
         if (connection.openConnection()) {
 
-            String s = String.format("UPDATE `ordercontent` inner join "
-                    + "`order` on `order`.ID = `ordercontent`.OrderID SET"
-                    + " `ContentStatus`= 5 WHERE"
-                    + "  `Table` = '%d'",
+            String s = String.format("UPDATE `order` INNER JOIN `table` on `order`.`TableNumber` = `table`.`TableNumber`\n"
+                    + "INNER JOIN `invoice` on `invoice`.`InvoiceNumber` = `order`.`InvoiceNumber`\n"
+                    + "SET `order`.`StatusNumber` = 6, `table`.`Status` = 0, `invoice`.`TotalCost` = '%s' \n"
+                    + "WHERE `table`.`TableNumber` = '%d' AND `table`.`Status` = 1 AND `order`.`OrderNumber` <> 6 ", totalCost,
                     tableID);
             boolean succesfulUpdate = connection.executeSQLUpdateStatement(s);
 
-            updateOrderHelper(tableID);
-
+            //updateOrderHelper(tableID);
             connection.closeConnection();
         }
     }
