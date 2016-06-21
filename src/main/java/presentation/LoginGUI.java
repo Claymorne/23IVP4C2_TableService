@@ -112,7 +112,7 @@ public class LoginGUI extends javax.swing.JPanel {
 
         if (loginResult == true) {
             JFrame Frame = new JFrame();
-            Frame.setSize(1000, 500);
+            Frame.setSize(1050, 690);
             Frame.setDefaultCloseOperation(
                     JFrame.EXIT_ON_CLOSE);
             Frame.setTitle("Hartige Hap Bediening");
