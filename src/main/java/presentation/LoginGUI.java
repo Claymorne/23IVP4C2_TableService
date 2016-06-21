@@ -6,6 +6,7 @@
 package presentation;
 
 import businesslogic.TableServiceManager;
+import java.awt.Color;
 import javax.swing.JFrame;
 
 /**
@@ -118,7 +119,7 @@ public class LoginGUI extends javax.swing.JPanel {
             Frame.setTitle("Hartige Hap Bediening");
             Frame.setContentPane(new presentation.ServiceGUI());
             Frame.setVisible(true);
-            this.setVisible(false);
+            Frame.setResizable(false);
         }
     }//GEN-LAST:event_loginButtonActionPerformed
 

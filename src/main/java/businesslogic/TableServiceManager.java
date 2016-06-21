@@ -101,7 +101,7 @@ public class TableServiceManager {
 
         ArrayList UniqueOrders = new ArrayList();
         for (Order o : this.orders) {
-            if (o.getConsumptionType() == consumptionType && UniqueOrders.contains(o.getOrderID()) == false && o.getContentStatus() != 5) {
+            if (o.getConsumptionType() == consumptionType && UniqueOrders.contains(o.getOrderID()) == false && o.getContentStatus() != 5 && o.getContentStatus() != 0) {
                 //If the dish/drink is equal to the ordertype you want, and the OrderID does not is unique (does not already exist),
                 // then add to the arraylist.
                 returnList.add(o);

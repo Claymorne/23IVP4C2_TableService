@@ -10,6 +10,7 @@ import datastorage.TableDAO;
 import domain.Order;
 import java.util.ArrayList;
 import javax.swing.JFrame;
+import presentation.LoginGUI;
 
 /**
  *
@@ -27,6 +28,7 @@ public class main {
         LoginFrame.setTitle("Hartige Hap Bediening");
         LoginFrame.setContentPane(new presentation.LoginGUI());
         LoginFrame.setVisible(true);
+        LoginFrame.setResizable(false);
 
         //Creates new JFrame, contentpane is LoginGUI
     }
