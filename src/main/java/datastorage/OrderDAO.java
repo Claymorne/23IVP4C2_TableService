@@ -31,7 +31,7 @@ public class OrderDAO {
     public ArrayList<Order> loadOrders() {
 
         drinkHelper();
-        
+
         ArrayList<Order> orderLijst = new ArrayList<>();
 
         DatabaseConnection connection = new DatabaseConnection();
@@ -185,5 +185,4 @@ public class OrderDAO {
             connection.closeConnection();
         }
     }
-
 }
