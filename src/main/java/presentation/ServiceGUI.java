@@ -89,6 +89,9 @@ public class ServiceGUI extends javax.swing.JPanel {
 
             rowIndex += 1;
         }
+
+        sortDrinksTable();
+        sortMealsTable();
     }
 
     private void fillOrderTable(DefaultTableModel tm, ConsumptionType GERECHT) {
@@ -129,6 +132,38 @@ public class ServiceGUI extends javax.swing.JPanel {
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(tmOrders);
 
         ordersTable.setRowSorter(sorter);
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+
+        int columnIndexToSort = 0;
+        sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.ASCENDING));
+
+        sorter.setSortKeys(sortKeys);
+        sorter.sort();
+    }
+
+    private void sortMealsTable() {
+
+        DefaultTableModel tmMeals = (DefaultTableModel) mealsTable.getModel();
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(tmMeals);
+
+        mealsTable.setRowSorter(sorter);
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+
+        int columnIndexToSort = 0;
+        sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.ASCENDING));
+
+        sorter.setSortKeys(sortKeys);
+        sorter.sort();
+    }
+
+    private void sortDrinksTable() {
+
+        DefaultTableModel tmDrinks = (DefaultTableModel) drinksTable.getModel();
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(tmDrinks);
+
+        drinksTable.setRowSorter(sorter);
         List<RowSorter.SortKey> sortKeys = new ArrayList<>();
 
         int columnIndexToSort = 0;
@@ -187,20 +222,23 @@ public class ServiceGUI extends javax.swing.JPanel {
     private void updateOrderStatus() {
         String str = (String) cbTable.getSelectedItem(); // get a string like "Table 1"
         str = str.replace("Tafel ", ""); // Change "Table 1" to "1"
-        int tableId = Integer.parseInt(str); // Change "1" to 1 (int)
+        int tableId = Integer.parseInt(str); // Change "1" to 1 (int)     
 
-        //Get employee
-        int employeeId = Integer.parseInt(employeeField.getText());
+        try {
+            int employeeId = Integer.parseInt(employeeField.getText());
+            //Get employee
+            // default value
+            ConsumptionType ct = Order.ConsumptionType.DRINK;
 
-        // default value
-        ConsumptionType ct = Order.ConsumptionType.DRINK;
+            if (radioMeal.isSelected() == true) {
+                ct = Order.ConsumptionType.MEAL;
+            } //If meal radiobutton is selected then the type will be put on MEAL,
+            //and otherwise it will stay on DRINK
 
-        if (radioMeal.isSelected() == true) {
-            ct = Order.ConsumptionType.MEAL;
-        } //If meal radiobutton is selected then the type will be put on MEAL,
-        //and otherwise it will stay on DRINK
-
-        tsManager.updateOrdersStatus(ct, tableId, employeeId);
+            tsManager.updateOrdersStatus(ct, tableId, employeeId);
+        } catch (NumberFormatException nfe) {
+            employeeField.setText("Foute werknemerscode");
+        }
 
     }
 
@@ -227,6 +265,7 @@ public class ServiceGUI extends javax.swing.JPanel {
         drinkLabel = new javax.swing.JLabel();
         mealLabel = new javax.swing.JLabel();
         employeeField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         oldTableField = new javax.swing.JTextField();
@@ -336,6 +375,8 @@ public class ServiceGUI extends javax.swing.JPanel {
             }
         });
 
+        jLabel3.setText("Medewerker");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -352,15 +393,23 @@ public class ServiceGUI extends javax.swing.JPanel {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(77, 77, 77)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(60, 60, 60)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(radioDrink, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(radioMeal, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(cbTable, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(handleButton))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(60, 60, 60)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(radioDrink, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(radioMeal, javax.swing.GroupLayout.Alignment.TRAILING))
+                                    .addComponent(cbTable, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(56, 56, 56)
+                                .addComponent(handleButton)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(refreshButton)
                 .addContainerGap())
         );
@@ -381,14 +430,16 @@ public class ServiceGUI extends javax.swing.JPanel {
                                 .addComponent(radioMeal)
                                 .addGap(13, 13, 13)
                                 .addComponent(cbTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(handleButton))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(refreshButton))
-                .addContainerGap(190, Short.MAX_VALUE))
+                .addContainerGap(186, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Overzicht", jPanel1);
@@ -680,7 +731,7 @@ public class ServiceGUI extends javax.swing.JPanel {
                 .addContainerGap(256, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Tests (Manager)", jPanel5);
+        jTabbedPane1.addTab("Tests ", jPanel5);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -806,6 +857,7 @@ public class ServiceGUI extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;

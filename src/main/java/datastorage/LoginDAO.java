@@ -14,21 +14,16 @@ import java.sql.ResultSet;
  */
 public class LoginDAO {
 
-    /**
-     *
-     */
+
     public boolean loginResult;
 
-    /**
-     *
-     */
+
     public LoginDAO() {
     }
 
     ;
         
     /**
-     *
      * @param mail
      * @param password
      * @return

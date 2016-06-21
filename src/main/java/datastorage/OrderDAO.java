@@ -20,26 +20,18 @@ import java.util.logging.Logger;
  */
 public class OrderDAO {
 
-    /**
-     *
-     */
     public OrderDAO() {
         // Nothing to be initialized. This is a stateless class. Constructor
         // has been added to explicitely make this clear.
     }
 
     /**
-     * Tries to find the loans for the given in the persistent data store, in
-     * this case a MySQL database.In this POC, the lend copies of the books are
-     * not loaded - it is out of scope for now.
-     *
-     *
-     * @return an ArrayList object containing the Loan objects that were found.
-     * In case no loan could be found, still a valid ArrayList object is
-     * returned. It does not contain any objects.
+     * Loads orders and puts them in an array.
      */
     public ArrayList<Order> loadOrders() {
 
+        drinkHelper();
+        
         ArrayList<Order> orderLijst = new ArrayList<>();
 
         DatabaseConnection connection = new DatabaseConnection();
@@ -107,7 +99,6 @@ public class OrderDAO {
     }
 
     /**
-     *
      * @param consumptionType
      * @param tableID
      * @param employeeId
@@ -136,7 +127,6 @@ public class OrderDAO {
                         + "OR `consumption`.ConsumptionType = 'dessert')", employeeId, tableID);
                 boolean succesfulupdate = connection.executeSQLDeleteStatement(s);
 
-                //update OrderHelper(tableID);
             }
 
             if (consumptionType == ConsumptionType.DRINK) {
@@ -157,68 +147,12 @@ public class OrderDAO {
                         + "`consumption`.ConsumptionType =  'drink')", employeeId, tableID);
                 boolean succesfulupdate = connection.executeSQLDeleteStatement(s);
             }
-            /*
-            String s = String.format("UPDATE `ordercontent` inner join "
-                    + "`order` on `order`.ID = `ordercontent`.OrderID SET"
-                    + " `ContentStatus`= 4 WHERE"
-                    + " `Consumptiontype` = '%s' AND `Table` = '%d'",
-                    consumptionType.toString().toLowerCase(), tableID);
-            boolean succesfulUpdate = connection.executeSQLUpdateStatement(s);
-
-            //Runs the updateOrderHelper
-            updateOrderHelper(tableID);  */
 
             connection.closeConnection();
         }
     }
 
-    /*
-    public void updateOrderHelper(int tableID) {
-
-        DatabaseConnection connection = new DatabaseConnection();
-        if (connection.openConnection()) {
-            //Select alles van de gegeven tafel
-            String s = String.format("SELECT * FROM `ordercontent` "
-                    + "inner join `order` on `order`.ID "
-                    + "= `ordercontent`.OrderID WHERE `Table` = '%d' ",
-                    tableID);
-
-            ResultSet resultset = connection.executeSQLSelectStatement(s);
-
-            //gevonden = default false
-            boolean found = false;
-            //alles klopt = default true
-            boolean allStatusCorrect = true;
-            try {
-                while (resultset.next()) {
-
-                    //als het gelukt is, staat found op true
-                    found = true;
-                    //Verkrijgt contentstatus
-                    int contentStatus = resultset.getInt("ContentStatus");
-                    //als contentstatus geen 4 (is geserveerd) is, gaat alles correct op false
-                    //anders blijft het true
-                    if (contentStatus != 4) {
-                        allStatusCorrect = false;
-                    }
-
-                }
-            } catch (SQLException ex) {
-
-            }
-            //als beiden true is gaat de order van word geserveerd naar is geserveerd
-            if (found && allStatusCorrect) {
-                String s2 = String.format("UPDATE `order` SET `StatusNr`=5 WHERE `Table`='%d'",
-                        tableID);
-                boolean succesfulUpdate = connection.executeSQLUpdateStatement(s2);
-            }
-
-            connection.closeConnection();
-        }
-
-    } */
     /**
-     *
      * @param tableID
      * @param totalCost
      */
@@ -233,7 +167,21 @@ public class OrderDAO {
                     + "WHERE `table`.`TableNumber` = '%d' AND `table`.`Pay` = 1 AND `order`.`StatusNumber` <> 6 ", totalCost, tableID);
             boolean succesfulUpdate = connection.executeSQLUpdateStatement(s);
 
-            //updateOrderHelper(tableID);
+            connection.closeConnection();
+        }
+    }
+
+    public void drinkHelper() {
+
+        DatabaseConnection connection = new DatabaseConnection();
+        if (connection.openConnection()) {
+
+            String s = String.format("UPDATE `consumptionorder`\n"
+                    + "INNER JOIN `consumption`\n"
+                    + "ON `consumptionorder`.`ConsumptionNumber` = `consumption`.`ConsumptionNumber`\n"
+                    + "SET `consumptionorder`.`ConsumptionStatus` = '3' WHERE (`consumption`.`ConsumptionType` = \"drink\" OR `consumption`.`ConsumptionType` = \"hot beverage\") AND (`consumptionorder`.`ConsumptionStatus` = '1' OR `consumptionorder`.`ConsumptionStatus` = '2')");
+            boolean succesfulUpdate = connection.executeSQLUpdateStatement(s);
+
             connection.closeConnection();
         }
     }

@@ -19,22 +19,15 @@ public class Order {
     private boolean wantsInvoice;
 
     /**
-     *
+     A ConsumptionType can be a meal or a drink.
      */
     public enum ConsumptionType {
 
-        /**
-         *
-         */
         MEAL,
-        /**
-         *
-         */
         DRINK
     };
 
     /**
-     *
      * @param OrderID
      * @param TableID
      * @param consumptionName
@@ -59,7 +52,6 @@ public class Order {
     }
 
     /**
-     *
      * @return
      */
     public double getPrice() {
@@ -67,7 +59,6 @@ public class Order {
     }
 
     /**
-     *
      * @return
      */
     public int getOrderID() {
@@ -75,7 +66,6 @@ public class Order {
     }
 
     /**
-     *
      * @param orderID
      */
     public void setOrderID(int orderID) {
@@ -83,7 +73,6 @@ public class Order {
     }
 
     /**
-     *
      * @return
      */
     public int getOrderContentID() {
@@ -91,7 +80,6 @@ public class Order {
     }
 
     /**
-     *
      * @param orderContentID
      */
     public void setOrderContentID(int orderContentID) {
@@ -99,7 +87,6 @@ public class Order {
     }
 
     /**
-     *
      * @return
      */
     public int getTableID() {
@@ -107,7 +94,6 @@ public class Order {
     }
 
     /**
-     *
      * @param tableID
      */
     public void setTableID(int tableID) {
@@ -115,7 +101,6 @@ public class Order {
     }
 
     /**
-     *
      * @return
      */
     public String getConsumptionName() {
@@ -123,7 +108,6 @@ public class Order {
     }
 
     /**
-     *
      * @param consumptionName
      */
     public void setConsumptionName(String consumptionName) {
@@ -131,7 +115,6 @@ public class Order {
     }
 
     /**
-     *
      * @return
      */
     public ConsumptionType getConsumptionType() {
@@ -139,7 +122,6 @@ public class Order {
     }
 
     /**
-     *
      * @return
      */
     public boolean GetWantsInvoice() {
@@ -147,7 +129,6 @@ public class Order {
     }
 
     /**
-     *
      * @param consumptionType
      */
     public void setConsumptionType(ConsumptionType consumptionType) {
@@ -155,7 +136,6 @@ public class Order {
     }
 
     /**
-     *
      * @return
      */
     public int getContentStatus() {
@@ -163,7 +143,6 @@ public class Order {
     }
 
     /**
-     *
      * @return
      */
     public String getContentStatusString() {

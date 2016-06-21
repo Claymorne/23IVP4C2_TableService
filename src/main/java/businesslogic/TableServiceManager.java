@@ -24,22 +24,18 @@ public class TableServiceManager {
     boolean loginResult;
 
     /**
-     *
+     * Loads orders on startup.
      */
     public TableServiceManager() {
         updateOrders();
     }
 
-    /**
-     *
-     */
     public void updateOrders() {
         this.orders = (new OrderDAO()).loadOrders();
         //load orders and put them in an array
     }
 
     /**
-     *
      * @param consumptionType
      * @return
      */
@@ -47,7 +43,7 @@ public class TableServiceManager {
         ArrayList<Order> returnList = new ArrayList<>();
 
         for (Order o : this.orders) {
-            //if the dish/drink (type) is equal to the type you want  , and the contentstatus is "will be served", 
+            //if the dish (type) is equal to the type you want  , and the contentstatus is "will be served", 
             //then add them to the returnlist
             if (o.getConsumptionType() == consumptionType && o.getContentStatus() == 3) {
                 returnList.add(o);
@@ -59,7 +55,6 @@ public class TableServiceManager {
     }
 
     /**
-     *
      * @return
      */
     public ArrayList<Integer> getListOfSortedUniqueTables() {
@@ -79,7 +74,6 @@ public class TableServiceManager {
     }
 
     /**
-     *
      * @return
      */
     public ArrayList<Integer> getListOfSortedUniqueInvoiceTables() {
@@ -99,7 +93,6 @@ public class TableServiceManager {
     }
 
     /**
-     *
      * @param consumptionType
      * @return
      */
@@ -122,7 +115,6 @@ public class TableServiceManager {
     }
 
     /**
-     *
      * @param tableID
      * @return
      */
@@ -141,7 +133,6 @@ public class TableServiceManager {
     }
 
     /**
-     *
      * @param consumptionType
      * @param tableID
      * @param employeeId
@@ -152,7 +143,6 @@ public class TableServiceManager {
     }
 
     /**
-     *
      * @param tableID
      * @param totalCost
      */
@@ -162,7 +152,6 @@ public class TableServiceManager {
     }
 
     /**
-     *
      * @param OldTableNumber
      * @param NewTableNumber
      */
@@ -173,7 +162,6 @@ public class TableServiceManager {
     }
 
     /**
-     *
      * @param mail
      * @param password
      * @return
@@ -184,28 +172,28 @@ public class TableServiceManager {
     }
 
     /**
-     *
+     * Tests the application - sets appetizer on delivery.
      */
     public void testAppetizer() {
         TestDAO.testSetReadyAppetizer();
     }
 
     /**
-     *
+     * Tests the application - sets maindish on delivery.
      */
     public void testMaindish() {
         TestDAO.testSetReadyMain();
     }
 
     /**
-     *
+     * Tests the application - sets table back.
      */
     public void testTable() {
         TestDAO.testChangeTable();
     }
 
     /**
-     *
+     * Tests the application - sets table on wantsinvoice.
      */
     public void testInvoice() {
         TestDAO.testSetInvoice();

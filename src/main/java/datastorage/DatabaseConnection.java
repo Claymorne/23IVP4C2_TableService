@@ -21,16 +21,13 @@ public class DatabaseConnection {
     // execution method.
     private Statement statement;
 
-    /**
-     *
-     */
+    
     public DatabaseConnection() {
         connection = null;
         statement = null;
     }
 
     /**
-     *
      * @return
      */
     public boolean openConnection() {
@@ -61,7 +58,6 @@ public class DatabaseConnection {
     }
 
     /**
-     *
      * @return
      */
     public boolean connectionIsOpen() {
@@ -81,9 +77,7 @@ public class DatabaseConnection {
         return open;
     }
 
-    /**
-     *
-     */
+
     public void closeConnection() {
         try {
             statement.close();
@@ -96,7 +90,6 @@ public class DatabaseConnection {
     }
 
     /**
-     *
      * @param query
      * @return
      */
@@ -119,7 +112,6 @@ public class DatabaseConnection {
     }
 
     /**
-     *
      * @param query
      * @return
      */
@@ -143,7 +135,6 @@ public class DatabaseConnection {
     }
 
     /**
-     *
      * @param query
      * @return
      */
@@ -152,7 +143,6 @@ public class DatabaseConnection {
     }
 
     /**
-     *
      * @param query
      * @return
      */
