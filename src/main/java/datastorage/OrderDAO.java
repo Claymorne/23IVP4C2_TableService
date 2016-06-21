@@ -16,10 +16,13 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author ppthgast
+ * @author Infosys
  */
 public class OrderDAO {
 
+    /**
+     *
+     */
     public OrderDAO() {
         // Nothing to be initialized. This is a stateless class. Constructor
         // has been added to explicitely make this clear.
@@ -30,8 +33,6 @@ public class OrderDAO {
      * this case a MySQL database.In this POC, the lend copies of the books are
      * not loaded - it is out of scope for now.
      *
-     * @param member identifies the member whose loans are to be loaded from the
-     * database
      *
      * @return an ArrayList object containing the Loan objects that were found.
      * In case no loan could be found, still a valid ArrayList object is
@@ -105,6 +106,12 @@ public class OrderDAO {
         //Give array of the orders 
     }
 
+    /**
+     *
+     * @param consumptionType
+     * @param tableID
+     * @param employeeId
+     */
     public void updateStatus(ConsumptionType consumptionType, int tableID, int employeeId) {
 
         DatabaseConnection connection = new DatabaseConnection();
@@ -210,17 +217,20 @@ public class OrderDAO {
         }
 
     } */
-
-    public void invoiceTable(int tableID, double totalCost) {
+    /**
+     *
+     * @param tableID
+     * @param totalCost
+     */
+    public void invoiceTable(int tableID, int totalCost) {
 
         DatabaseConnection connection = new DatabaseConnection();
         if (connection.openConnection()) {
 
             String s = String.format("UPDATE `order` INNER JOIN `table` on `order`.`TableNumber` = `table`.`TableNumber`\n"
                     + "INNER JOIN `invoice` on `invoice`.`InvoiceNumber` = `order`.`InvoiceNumber`\n"
-                    + "SET `order`.`StatusNumber` = 6, `table`.`Status` = 0, `invoice`.`TotalCost` = '%s' \n"
-                    + "WHERE `table`.`TableNumber` = '%d' AND `table`.`Status` = 1 AND `order`.`OrderNumber` <> 6 ", totalCost,
-                    tableID);
+                    + "SET `order`.`StatusNumber` = 6, `table`.`Pay` = 0, `invoice`.`TotalCost` = '%d' \n"
+                    + "WHERE `table`.`TableNumber` = '%d' AND `table`.`Pay` = 1 AND `order`.`StatusNumber` <> 6 ", totalCost, tableID);
             boolean succesfulUpdate = connection.executeSQLUpdateStatement(s);
 
             //updateOrderHelper(tableID);

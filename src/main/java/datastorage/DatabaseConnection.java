@@ -9,7 +9,7 @@ import java.sql.*;
 
 /**
  *
- * @author Ray
+ * @author Infosys
  */
 public class DatabaseConnection {
 
@@ -21,11 +21,18 @@ public class DatabaseConnection {
     // execution method.
     private Statement statement;
 
+    /**
+     *
+     */
     public DatabaseConnection() {
         connection = null;
         statement = null;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean openConnection() {
         boolean result = false;
 
@@ -53,6 +60,10 @@ public class DatabaseConnection {
         return result;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean connectionIsOpen() {
         boolean open = false;
 
@@ -70,6 +81,9 @@ public class DatabaseConnection {
         return open;
     }
 
+    /**
+     *
+     */
     public void closeConnection() {
         try {
             statement.close();
@@ -81,6 +95,11 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     *
+     * @param query
+     * @return
+     */
     public ResultSet executeSQLSelectStatement(String query) {
         ResultSet resultset = null;
 
@@ -99,6 +118,11 @@ public class DatabaseConnection {
         return resultset;
     }
 
+    /**
+     *
+     * @param query
+     * @return
+     */
     public boolean executeSQLDeleteStatement(String query) {
         boolean result = false;
 
@@ -118,10 +142,20 @@ public class DatabaseConnection {
         return result;
     }
 
+    /**
+     *
+     * @param query
+     * @return
+     */
     public boolean executeSQLUpdateStatement(String query) {
         return executeSQLDeleteStatement(query);
     }
 
+    /**
+     *
+     * @param query
+     * @return
+     */
     public ResultSet executeSQLInsertStatement(String query) {
         ResultSet rs = null;
 

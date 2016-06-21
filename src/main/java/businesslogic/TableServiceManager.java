@@ -5,8 +5,10 @@
  */
 package businesslogic;
 
+import datastorage.LoginDAO;
 import datastorage.OrderDAO;
 import datastorage.TableDAO;
+import datastorage.TestDAO;
 import domain.Order;
 import domain.Order.ConsumptionType;
 import java.util.ArrayList;
@@ -14,21 +16,33 @@ import java.util.Collections;
 
 /**
  *
- * @author Ray
+ * @author Infosys
  */
 public class TableServiceManager {
 
     ArrayList<Order> orders;
+    boolean loginResult;
 
+    /**
+     *
+     */
     public TableServiceManager() {
         updateOrders();
     }
 
+    /**
+     *
+     */
     public void updateOrders() {
         this.orders = (new OrderDAO()).loadOrders();
         //load orders and put them in an array
     }
 
+    /**
+     *
+     * @param consumptionType
+     * @return
+     */
     public ArrayList<Order> getOrders(ConsumptionType consumptionType) {
         ArrayList<Order> returnList = new ArrayList<>();
 
@@ -44,6 +58,10 @@ public class TableServiceManager {
         return returnList;
     }
 
+    /**
+     *
+     * @return
+     */
     public ArrayList<Integer> getListOfSortedUniqueTables() {
         ArrayList<Integer> returnList = new ArrayList<>();
 
@@ -60,6 +78,10 @@ public class TableServiceManager {
         return returnList;
     }
 
+    /**
+     *
+     * @return
+     */
     public ArrayList<Integer> getListOfSortedUniqueInvoiceTables() {
         ArrayList<Integer> returnList = new ArrayList<>();
 
@@ -76,12 +98,17 @@ public class TableServiceManager {
         return returnList;
     }
 
+    /**
+     *
+     * @param consumptionType
+     * @return
+     */
     public ArrayList<Order> getUniqueOrders(ConsumptionType consumptionType) {
         ArrayList<Order> returnList = new ArrayList<>();
 
         ArrayList UniqueOrders = new ArrayList();
         for (Order o : this.orders) {
-            if (o.getConsumptionType() == consumptionType && UniqueOrders.contains(o.getOrderID()) == false) {
+            if (o.getConsumptionType() == consumptionType && UniqueOrders.contains(o.getOrderID()) == false && o.getContentStatus() != 5) {
                 //If the dish/drink is equal to the ordertype you want, and the OrderID does not is unique (does not already exist),
                 // then add to the arraylist.
                 returnList.add(o);
@@ -94,6 +121,11 @@ public class TableServiceManager {
         return returnList;
     }
 
+    /**
+     *
+     * @param tableID
+     * @return
+     */
     public ArrayList<Order> getInvoiceOrders(int tableID) {
         ArrayList<Order> returnList = new ArrayList<>();
 
@@ -108,19 +140,74 @@ public class TableServiceManager {
         return returnList;
     }
 
+    /**
+     *
+     * @param consumptionType
+     * @param tableID
+     * @param employeeId
+     */
     public void updateOrdersStatus(ConsumptionType consumptionType, int tableID, int employeeId) {
         (new OrderDAO()).updateStatus(consumptionType, tableID, employeeId);
         //The order status information will be updated
     }
 
-    public void invoiceTable(int tableID, double totalCost) {
+    /**
+     *
+     * @param tableID
+     * @param totalCost
+     */
+    public void invoiceTable(int tableID, int totalCost) {
         (new OrderDAO()).invoiceTable(tableID, totalCost);
         //The bill information will be updated
     }
 
+    /**
+     *
+     * @param OldTableNumber
+     * @param NewTableNumber
+     */
     public void changeTable(int OldTableNumber, int NewTableNumber) {
 
         TableDAO.changeTable(OldTableNumber, NewTableNumber);
         //The tablenumber change will be updated
+    }
+
+    /**
+     *
+     * @param mail
+     * @param password
+     * @return
+     */
+    public boolean loginCheck(String mail, String password) {
+        loginResult = (new LoginDAO()).LoginChecker(mail, password);
+        return loginResult;
+    }
+
+    /**
+     *
+     */
+    public void testAppetizer() {
+        TestDAO.testSetReadyAppetizer();
+    }
+
+    /**
+     *
+     */
+    public void testMaindish() {
+        TestDAO.testSetReadyMain();
+    }
+
+    /**
+     *
+     */
+    public void testTable() {
+        TestDAO.testChangeTable();
+    }
+
+    /**
+     *
+     */
+    public void testInvoice() {
+        TestDAO.testSetInvoice();
     }
 }

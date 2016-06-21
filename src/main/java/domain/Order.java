@@ -7,7 +7,7 @@ package domain;
 
 /**
  *
- * @author Ray
+ * @author Infosys
  */
 public class Order {
 
@@ -18,11 +18,32 @@ public class Order {
     private double price;
     private boolean wantsInvoice;
 
+    /**
+     *
+     */
     public enum ConsumptionType {
+
+        /**
+         *
+         */
         MEAL,
+        /**
+         *
+         */
         DRINK
     };
 
+    /**
+     *
+     * @param OrderID
+     * @param TableID
+     * @param consumptionName
+     * @param consumptionType
+     * @param orderContentID
+     * @param contentStatus
+     * @param price
+     * @param wantsinvoice
+     */
     public Order(int OrderID, int TableID, String consumptionName,
             ConsumptionType consumptionType, int orderContentID,
             int contentStatus, double price, boolean wantsinvoice) {
@@ -37,58 +58,114 @@ public class Order {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public double getPrice() {
         return price;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getOrderID() {
         return orderID;
     }
 
+    /**
+     *
+     * @param orderID
+     */
     public void setOrderID(int orderID) {
         this.orderID = orderID;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getOrderContentID() {
         return orderContentID;
     }
 
+    /**
+     *
+     * @param orderContentID
+     */
     public void setOrderContentID(int orderContentID) {
         this.orderContentID = orderContentID;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTableID() {
         return tableID;
     }
 
+    /**
+     *
+     * @param tableID
+     */
     public void setTableID(int tableID) {
         this.tableID = tableID;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getConsumptionName() {
         return consumptionName;
     }
 
+    /**
+     *
+     * @param consumptionName
+     */
     public void setConsumptionName(String consumptionName) {
         this.consumptionName = consumptionName;
     }
 
+    /**
+     *
+     * @return
+     */
     public ConsumptionType getConsumptionType() {
         return consumptionType;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean GetWantsInvoice() {
         return wantsInvoice;
     }
 
+    /**
+     *
+     * @param consumptionType
+     */
     public void setConsumptionType(ConsumptionType consumptionType) {
         this.consumptionType = consumptionType;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getContentStatus() {
         return contentStatus;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getContentStatusString() {
 
         if (contentStatus == 0) {

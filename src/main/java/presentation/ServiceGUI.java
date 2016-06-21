@@ -18,7 +18,7 @@ import javax.swing.table.*;
 
 /**
  *
- * @author Ray
+ * @author Infosys
  */
 public class ServiceGUI extends javax.swing.JPanel {
 
@@ -247,6 +247,12 @@ public class ServiceGUI extends javax.swing.JPanel {
         jScrollPane3 = new javax.swing.JScrollPane();
         ordersTable = new javax.swing.JTable();
         refreshButton3 = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        testAppetizerButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        testMaindishButton = new javax.swing.JButton();
+        testTableButton = new javax.swing.JButton();
+        testInvoiceButton = new javax.swing.JButton();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -613,6 +619,69 @@ public class ServiceGUI extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Status Bestellingen", jPanel4);
 
+        testAppetizerButton.setText("Zet Voorgerecht op \"Wordt geserveerd\"");
+        testAppetizerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testAppetizerButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Deze tests worden gedaan op OrderID's 20 en 21, wat bestaat uit 2 voorgerechten met drinken, en 2 hoofdgerechten met drinken.");
+
+        testMaindishButton.setText("Zet Hoofdgerechten op \"Wordt geserveerd\"");
+        testMaindishButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testMaindishButtonActionPerformed(evt);
+            }
+        });
+
+        testTableButton.setText("Zet Tafel terug naar tafel 20");
+        testTableButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testTableButtonActionPerformed(evt);
+            }
+        });
+
+        testInvoiceButton.setText("Zet tafel 20 op wil afrekenen.");
+        testInvoiceButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testInvoiceButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(testInvoiceButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(testTableButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(testAppetizerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(testMaindishButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(307, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(testAppetizerButton)
+                .addGap(18, 18, 18)
+                .addComponent(testMaindishButton)
+                .addGap(18, 18, 18)
+                .addComponent(testTableButton)
+                .addGap(18, 18, 18)
+                .addComponent(testInvoiceButton)
+                .addContainerGap(256, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Tests (Manager)", jPanel5);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -674,7 +743,7 @@ public class ServiceGUI extends javax.swing.JPanel {
         str = str.replace("Tafel ", ""); // Change "Table 1" to "1"
         int tableId = Integer.parseInt(str); // Change "1" to 1 (int)
 
-        double totalPrice = 0;
+        int totalPrice = 0;
         for (Order o : tsManager.getInvoiceOrders(tableId)) {
 
             totalPrice += o.getPrice();
@@ -706,6 +775,22 @@ public class ServiceGUI extends javax.swing.JPanel {
         refreshUIContent();
     }//GEN-LAST:event_refreshButton3ActionPerformed
 
+    private void testAppetizerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testAppetizerButtonActionPerformed
+        tsManager.testAppetizer();
+    }//GEN-LAST:event_testAppetizerButtonActionPerformed
+
+    private void testMaindishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testMaindishButtonActionPerformed
+        tsManager.testMaindish();
+    }//GEN-LAST:event_testMaindishButtonActionPerformed
+
+    private void testTableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testTableButtonActionPerformed
+        tsManager.testTable();
+    }//GEN-LAST:event_testTableButtonActionPerformed
+
+    private void testInvoiceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testInvoiceButtonActionPerformed
+        tsManager.testInvoice();
+    }//GEN-LAST:event_testInvoiceButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbInvoice;
@@ -720,12 +805,14 @@ public class ServiceGUI extends javax.swing.JPanel {
     private javax.swing.JTextField invoiceTotalPrice;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -741,6 +828,10 @@ public class ServiceGUI extends javax.swing.JPanel {
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton refreshButton2;
     private javax.swing.JButton refreshButton3;
+    private javax.swing.JButton testAppetizerButton;
+    private javax.swing.JButton testInvoiceButton;
+    private javax.swing.JButton testMaindishButton;
+    private javax.swing.JButton testTableButton;
     private javax.swing.JButton updateTableButton;
     // End of variables declaration//GEN-END:variables
 }
